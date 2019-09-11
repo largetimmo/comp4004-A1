@@ -11,8 +11,7 @@ public class ApplicationArgumentTest {
 
     @Test
     public void testApplicationArgumentTestWithEmptyArgument() throws Exception {
-        List<String> args = new ArrayList<>();
         Properties expectedProperty = null;
-        Assert.assertEquals(A1Application.getProperties((String[]) args.toArray()),expectedProperty);
+        Assert.assertEquals(A1Application.getProperties(new String[]{}),expectedProperty);
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties ={"app.mode=client"} )
+@SpringBootTest(properties ={"app.mode=client","server.host=localhost","server.port=39999"} )
 public class ClientGameModeTest {
 
     @Autowired
