@@ -22,7 +22,7 @@ public class ServerGameManagerTest {
     @Test
     public void testInitPlayer(){
         Socket socket = Mockito.mock(Socket.class);
-        Mockito.when(socket.isClosed()).thenReturn(true);
+        Mockito.when(socket.isClosed()).thenReturn(false);
         PlayerBO playerBO = serverGameManager.initPlayer(socket);
         Assert.assertNotNull(playerBO.getClient());
         Assert.assertNotNull(playerBO.getPlayerId());
