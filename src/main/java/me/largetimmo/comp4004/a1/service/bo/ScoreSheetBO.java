@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ScoreSheetBO {
 
-    private ScoreSectionBO upperSection;
+    private UpperSectionGameScore upperSection;
 
-    private ScoreSectionBO lowerSection;
+    private LowerSectionGameScore lowerSection;
 }
