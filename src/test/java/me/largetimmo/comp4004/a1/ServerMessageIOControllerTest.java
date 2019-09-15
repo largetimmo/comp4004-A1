@@ -20,7 +20,7 @@ import java.net.SocketAddress;
 import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties = {"server.port=39999","app.mode=server"})
+@SpringBootTest(properties = {"server.port=39998","app.mode=server"})
 public class ServerMessageIOControllerTest {
 
     @Autowired
@@ -33,7 +33,7 @@ public class ServerMessageIOControllerTest {
     @Test
     public void testConnection() throws Exception{
         Socket socket = new Socket();
-        socket.connect(new InetSocketAddress("localhost",39999));
+        socket.connect(new InetSocketAddress("localhost",39998));
         Assert.assertTrue(socket.isConnected());
         Thread.sleep(1000);
         Assert.assertTrue(serverGameManager.getPlayers().size()==1);
