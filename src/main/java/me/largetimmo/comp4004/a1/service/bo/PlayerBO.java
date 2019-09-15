@@ -9,6 +9,8 @@ public class PlayerBO {
 
     private String playerId;
 
+    private String playerName;
+
     private ScoreSheetBO scoreSheet;
 
     private Connection connection;
