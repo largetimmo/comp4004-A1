@@ -8,6 +8,6 @@ public class BasicDTO<T> {
 
     private T data;
     private String type;
-    private String action;
+    private DTOAction action;
 
 }
