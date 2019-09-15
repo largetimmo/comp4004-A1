@@ -11,5 +11,5 @@ public class PlayerBO {
 
     private ScoreSheetBO scoreSheet;
 
-    private Socket client;
+    private Connection connection;
 }

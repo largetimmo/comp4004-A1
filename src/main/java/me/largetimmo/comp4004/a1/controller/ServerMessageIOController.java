@@ -34,8 +34,8 @@ public class ServerMessageIOController {
                     socketCount++;
                     if (serverGameManager == null){
                         serverGameManager = context.getBean(ServerGameManager.class);
+                        serverGameManager.initPlayer(s);
                     }
-
                 }
 
             } catch (IOException e) {
@@ -43,6 +43,5 @@ public class ServerMessageIOController {
             }
         }).start();
     }
-
 
 }
