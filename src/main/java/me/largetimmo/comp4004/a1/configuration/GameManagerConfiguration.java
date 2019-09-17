@@ -18,21 +18,22 @@ public class GameManagerConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "app.mode",havingValue = "server")
-    public ServerMessageIOController getServerMessageIOController(@Value("${server.port}") Integer port, ApplicationContext context) throws IOException {
-        return new ServerMessageIOController(port,context);
+    public ServerMessageIOController getServerMessageIOController(@Value("${server.port}") Integer port,ServerGameManager serverGameManager) throws IOException {
+        return new ServerMessageIOController(port,serverGameManager);
     }
 
     @Bean
     @ConditionalOnProperty(name = "app.mode",havingValue = "client")
-    public ClientMessageIOController getClientMessageIOController(@Value("${server.host}")String host, @Value("${server.port}")Integer port,
-                                                                  ApplicationContext context) throws IOException{
-        return new ClientMessageIOController(host,port,context);
+    public ClientMessageIOController getClientMessageIOController(@Value("${server.host}")String host,
+                                                                  @Value("${server.port}")Integer port,
+                                                                  ClientGameManager clientGameManager) throws IOException{
+        return new ClientMessageIOController(host,port,clientGameManager);
     }
 
     @Bean
     @ConditionalOnProperty(name = "app.mode",havingValue = "server")
-    public ServerGameManager getServerGameManager(ServerMessageIOController serverMessageIOController){
-        return new ServerGameManager(serverMessageIOController);
+    public ServerGameManager getServerGameManager(){
+        return new ServerGameManager();
     }
 
     @Bean

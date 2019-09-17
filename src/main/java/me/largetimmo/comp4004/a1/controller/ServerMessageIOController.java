@@ -17,10 +17,8 @@ public class ServerMessageIOController {
 
     private ServerGameManager serverGameManager;
 
-    private ApplicationContext context;
-
-    public ServerMessageIOController(Integer port,ApplicationContext context)throws IOException {
-        this.context = context;
+    public ServerMessageIOController(Integer port,ServerGameManager serverGameManager)throws IOException {
+        this.serverGameManager = serverGameManager;
         serverSocket = new ServerSocket(port);
         new Thread(()->{
             int socketCount = 0;
@@ -33,7 +31,6 @@ public class ServerMessageIOController {
                     Socket s = serverSocket.accept();
                     socketCount++;
                     if (serverGameManager == null){
-                        serverGameManager = context.getBean(ServerGameManager.class);
                         serverGameManager.initPlayer(s);
                     }
                 }

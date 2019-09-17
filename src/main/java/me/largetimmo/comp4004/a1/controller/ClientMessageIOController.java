@@ -13,7 +13,10 @@ public class ClientMessageIOController {
     @Getter
     private Socket connection;
 
-    public ClientMessageIOController(String serverHost, Integer serverPort, ApplicationContext context) throws IOException {
+    private ClientGameManager clientGameManager;
+
+    public ClientMessageIOController(String serverHost, Integer serverPort, ClientGameManager clientGameManager) throws IOException {
+        this.clientGameManager = clientGameManager;
         connection = new Socket(serverHost, serverPort);
     }
 }

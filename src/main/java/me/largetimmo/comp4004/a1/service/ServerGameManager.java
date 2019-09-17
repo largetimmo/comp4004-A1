@@ -15,13 +15,11 @@ import java.util.UUID;
 @Slf4j
 public class ServerGameManager {
 
-    private ServerMessageIOController serverMessageIOController;
 
     @Getter
     private List<PlayerBO> players;
 
-    public ServerGameManager(ServerMessageIOController serverMessageIOController) {
-        this.serverMessageIOController = serverMessageIOController;
+    public ServerGameManager() {
         players = new ArrayList<>();
     }
 
