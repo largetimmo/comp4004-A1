@@ -4,9 +4,9 @@ package me.largetimmo.comp4004.a1.configuration.dto;
 import lombok.Data;
 
 @Data
-public class BasicDTO<T> {
+public class BasicDTO {
 
-    private T data;
+    private String data;
     private String type;
     private DTOAction action;
 
