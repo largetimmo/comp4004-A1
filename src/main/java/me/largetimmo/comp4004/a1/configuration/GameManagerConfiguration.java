@@ -24,8 +24,9 @@ public class GameManagerConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "app.mode",havingValue = "client")
-    public ClientMessageIOController getClientMessageIOController() throws IOException{
-        return new ClientMessageIOController();
+    public ClientMessageIOController getClientMessageIOController(@Value("${server.host}")String host, @Value("${server.port}")Integer port,
+                                                                  ApplicationContext context) throws IOException{
+        return new ClientMessageIOController(host,port,context);
     }
 
     @Bean
