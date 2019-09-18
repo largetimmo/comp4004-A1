@@ -30,9 +30,7 @@ public class ServerMessageIOController {
                     }
                     Socket s = serverSocket.accept();
                     socketCount++;
-                    if (serverGameManager == null){
-                        serverGameManager.initPlayer(s);
-                    }
+                    serverGameManager.initPlayer(s);
                 }
 
             } catch (IOException e) {

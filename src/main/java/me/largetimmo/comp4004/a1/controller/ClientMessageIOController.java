@@ -18,5 +18,6 @@ public class ClientMessageIOController {
     public ClientMessageIOController(String serverHost, Integer serverPort, ClientGameManager clientGameManager) throws IOException {
         this.clientGameManager = clientGameManager;
         connection = new Socket(serverHost, serverPort);
+        clientGameManager.initPlayer(connection);
     }
 }

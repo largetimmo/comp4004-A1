@@ -1,8 +1,11 @@
 package me.largetimmo.comp4004.a1.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import me.largetimmo.comp4004.a1.configuration.dto.BasicDTO;
+import me.largetimmo.comp4004.a1.configuration.dto.DTOAction;
 import me.largetimmo.comp4004.a1.controller.ServerMessageIOController;
 import me.largetimmo.comp4004.a1.service.bo.*;
 
@@ -19,8 +22,11 @@ public class ServerGameManager {
     @Getter
     private List<PlayerBO> players;
 
-    public ServerGameManager() {
+    private ObjectMapper objectMapper;
+
+    public ServerGameManager(ObjectMapper objectMapper) {
         players = new ArrayList<>();
+        this.objectMapper = objectMapper;
     }
 
     public PlayerBO initPlayer(Socket socket){
@@ -43,7 +49,16 @@ public class ServerGameManager {
         scoreSheet.setLowerSection(new LowerSectionGameScore());
         scoreSheet.setUpperSection(new UpperSectionGameScore());
         playerBO.setScoreSheet(scoreSheet);
-        this.players.add(playerBO);
+        players.add(playerBO);
+        BasicDTO helloDTO = new BasicDTO();
+        helloDTO.setAction(DTOAction.HELLO);
+        helloDTO.setType("String");
+        helloDTO.setData(playerBO.getPlayerId());
+        try {
+            connection.send(objectMapper.writeValueAsString(helloDTO));
+        } catch (IOException e) {
+            log.error("Failed to communicate with client",e);
+        }
         return playerBO;
     }
 }

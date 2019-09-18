@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.stream.Collectors;
+
 
 @Data
 public class Connection {
@@ -19,6 +19,7 @@ public class Connection {
 
     public void send(String data) throws IOException {
         writer.write(data);
+        writer.newLine();
         writer.flush();
     }
 
