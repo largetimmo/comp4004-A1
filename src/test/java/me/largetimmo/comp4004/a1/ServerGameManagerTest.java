@@ -3,6 +3,10 @@ package me.largetimmo.comp4004.a1;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.largetimmo.comp4004.a1.configuration.dto.BasicDTO;
 import me.largetimmo.comp4004.a1.configuration.dto.DTOAction;
+import me.largetimmo.comp4004.a1.configuration.dto.PlayerDTO;
+import me.largetimmo.comp4004.a1.configuration.dto.mapper.PlayerDTOMapper;
+import me.largetimmo.comp4004.a1.controller.ClientMessageIOController;
+import me.largetimmo.comp4004.a1.service.ClientGameManager;
 import me.largetimmo.comp4004.a1.service.ServerGameManager;
 import me.largetimmo.comp4004.a1.service.bo.PlayerBO;
 import org.junit.*;
@@ -13,18 +17,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {"server.port=39989","app.mode=server"})
 public class ServerGameManagerTest {
 
     @Autowired
-    ServerGameManager serverGameManager;
+    private ServerGameManager serverGameManager;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private PlayerDTOMapper playerDTOMapper;
+
+    private ClientMessageIOController clientMessageIOController;
+
+    private ClientGameManager clientGameManager;
+
 
     @After
     public void clean() throws Exception {
@@ -32,40 +49,14 @@ public class ServerGameManagerTest {
     }
 
     @Test
-    public void testInitPlayer() throws Exception {
-        Socket socket = new Socket();
-        socket.connect(new InetSocketAddress("localhost",39989));
-        BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    public void handleMessage() throws Exception{
+        File f = TestUtil.createTempFileWithContent(Arrays.asList("kyle","y"));
+        clientGameManager = Mockito.spy(new ClientGameManager(objectMapper,playerDTOMapper,new FileInputStream(f)));
+        clientMessageIOController = Mockito.spy(new ClientMessageIOController("localhost", 39989, clientGameManager));
         Thread.sleep(1000);
-        Assert.assertTrue(socket.isConnected());
-        PlayerBO playerBO = serverGameManager.initPlayer(socket);
-        Assert.assertNotNull(playerBO.getConnection());
-        Assert.assertNotNull(playerBO.getPlayerId());
-        Assert.assertNotNull(playerBO.getScoreSheet());
-        for (int i =0;i<5;i++){
-            if (br.ready()){
-                break;
-            }
-            if (i == 4){
-                System.out.print("Failed to receive data");
-            }
-            Thread.sleep(1000);
-        }
-        Assert.assertTrue(br.ready());
-        BasicDTO dto = new ObjectMapper().readValue(br.readLine(),BasicDTO.class);
-        Assert.assertEquals(dto.getAction(), DTOAction.HELLO);
-        Assert.assertNotNull(dto.getData());
-        Assert.assertEquals("String",dto.getType());
+        Mockito.verify(clientGameManager,Mockito.times(1)).handleReady(Mockito.any());
+        Assert.assertEquals(clientGameManager.getPlayers().size(),1);
+
     }
 
-    @Test
-    public void testInitTwoPlayers() throws Exception{
-        Socket socket1 = new Socket();
-        Socket socket2 = new Socket();
-        socket1.connect(new InetSocketAddress("localhost",39989));
-        socket2.connect(new InetSocketAddress("localhost",39989));
-        PlayerBO player1 = serverGameManager.initPlayer(socket1);
-        PlayerBO player2 = serverGameManager.initPlayer(socket2);
-        Assert.assertNotEquals(player1.getPlayerId(),player2.getPlayerId());
-    }
 }
