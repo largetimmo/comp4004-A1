@@ -4,6 +4,7 @@ package me.largetimmo.comp4004.a1;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.largetimmo.comp4004.a1.configuration.dto.BasicDTO;
 import me.largetimmo.comp4004.a1.configuration.dto.DTOAction;
+import me.largetimmo.comp4004.a1.configuration.dto.PlayerDTO;
 import me.largetimmo.comp4004.a1.controller.ClientMessageIOController;
 import me.largetimmo.comp4004.a1.service.ClientGameManager;
 import org.junit.Assert;
@@ -24,7 +25,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(properties = {"app.mode=client", "server.host=localhost", "server.port=37777"})
-public class ClientMessageIOControllerTest {
+public class ClientTest {
 
     private static ServerSocket serverSocket;
 
@@ -33,6 +34,9 @@ public class ClientMessageIOControllerTest {
 
     @Autowired
     private ClientGameManager clientGameManager;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private static File inputFile;
 
@@ -78,5 +82,31 @@ public class ClientMessageIOControllerTest {
         Thread.sleep(1000);
         Assert.assertNotNull(clientGameManager.getCurrentPlayer());
         Assert.assertNotNull(clientGameManager.getCurrentPlayer().getPlayerId());
+    }
+
+
+    @Test
+    public void testHandleMessage() throws Exception{
+        List<PlayerDTO> players = new ArrayList<>();
+        PlayerDTO player1 = new PlayerDTO();
+        PlayerDTO player2 = new PlayerDTO();
+        PlayerDTO player3 = new PlayerDTO();
+        player1.setPlayerId("111");
+        player2.setPlayerId("222");
+        player3.setPlayerId("333");
+        player1.setPlayerName("name1");
+        player2.setPlayerName("name2");
+        player3.setPlayerName("name3");
+        players.add(player1);
+        players.add(player2);
+        players.add(player3);
+
+        BasicDTO dto = new BasicDTO();
+        dto.setAction(DTOAction.SYNC_PLAYER);
+        dto.setType("String");
+        dto.setData(objectMapper.writeValueAsString(players));
+        clientGameManager.messageHandler(objectMapper.writeValueAsString(dto));
+        Assert.assertEquals(clientGameManager.getPlayers().size(),3);
+
     }
 }
