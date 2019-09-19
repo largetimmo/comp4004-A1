@@ -1,6 +1,7 @@
 package me.largetimmo.comp4004.a1.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.largetimmo.comp4004.a1.configuration.dto.mapper.PlayerDTOMapper;
 import me.largetimmo.comp4004.a1.controller.ClientMessageIOController;
 import me.largetimmo.comp4004.a1.controller.ServerMessageIOController;
 import me.largetimmo.comp4004.a1.service.ClientGameManager;
@@ -38,8 +39,8 @@ public class GameManagerConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "app.mode",havingValue = "client")
-    public ClientGameManager getClientGameManager(ObjectMapper objectMapper){
-        return new ClientGameManager(objectMapper);
+    public ClientGameManager getClientGameManager(ObjectMapper objectMapper,PlayerDTOMapper playerDTOMapper){
+        return new ClientGameManager(objectMapper,playerDTOMapper);
     }
 
     @Bean

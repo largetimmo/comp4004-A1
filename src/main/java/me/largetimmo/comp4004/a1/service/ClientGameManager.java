@@ -1,9 +1,12 @@
 package me.largetimmo.comp4004.a1.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import me.largetimmo.comp4004.a1.configuration.dto.BasicDTO;
 import me.largetimmo.comp4004.a1.configuration.dto.DTOAction;
+import me.largetimmo.comp4004.a1.configuration.dto.PlayerDTO;
+import me.largetimmo.comp4004.a1.configuration.dto.mapper.PlayerDTOMapper;
 import me.largetimmo.comp4004.a1.service.bo.Connection;
 import me.largetimmo.comp4004.a1.service.bo.PlayerBO;
 
@@ -11,6 +14,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ClientGameManager {
 
@@ -24,8 +28,11 @@ public class ClientGameManager {
 
     private ObjectMapper objectMapper;
 
-    public ClientGameManager(ObjectMapper objectMapper) {
+    private PlayerDTOMapper playerDTOMapper;
+
+    public ClientGameManager(ObjectMapper objectMapper,PlayerDTOMapper playerDTOMapper) {
         this.objectMapper = objectMapper;
+        this.playerDTOMapper = playerDTOMapper;
     }
 
     public void initPlayer(Socket socket) throws IOException {
@@ -57,8 +64,19 @@ public class ClientGameManager {
         connection.send(objectMapper.writeValueAsString(playerReadyDTO));
     }
 
-    public void messageHandler(BasicDTO dto){
+    public void messageHandler(String str) throws IOException {
+        BasicDTO dto = objectMapper.readValue(str,BasicDTO.class);
         switch (dto.getAction()){
+            case SYNC_PLAYER:
+                handleSyncPlayer(dto);
+                break;
         }
     }
+
+    public void handleSyncPlayer(BasicDTO dto) throws IOException {
+        List<PlayerDTO> playerDTOS = objectMapper.readValue(dto.getData(),new TypeReference<ArrayList<PlayerDTO>>(){});
+        players = playerDTOS.stream().map(playerDTOMapper::map).collect(Collectors.toList());
+    }
+
+
 }
