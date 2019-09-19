@@ -40,7 +40,7 @@ public class GameManagerConfiguration {
     @Bean
     @ConditionalOnProperty(name = "app.mode",havingValue = "client")
     public ClientGameManager getClientGameManager(ObjectMapper objectMapper,PlayerDTOMapper playerDTOMapper){
-        return new ClientGameManager(objectMapper,playerDTOMapper);
+        return new ClientGameManager(objectMapper,playerDTOMapper,System.in);
     }
 
     @Bean

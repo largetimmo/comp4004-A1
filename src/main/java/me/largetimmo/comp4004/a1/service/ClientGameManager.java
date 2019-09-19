@@ -30,9 +30,12 @@ public class ClientGameManager {
 
     private PlayerDTOMapper playerDTOMapper;
 
-    public ClientGameManager(ObjectMapper objectMapper,PlayerDTOMapper playerDTOMapper) {
+    private InputStream inputStream;
+
+    public ClientGameManager(ObjectMapper objectMapper,PlayerDTOMapper playerDTOMapper,InputStream inputStream) {
         this.objectMapper = objectMapper;
         this.playerDTOMapper = playerDTOMapper;
+        this.inputStream = inputStream;
     }
 
     public void initPlayer(Socket socket) throws IOException {
@@ -43,7 +46,7 @@ public class ClientGameManager {
         connection.setReader(new BufferedReader(new InputStreamReader(socket.getInputStream())));
         connection.setWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
         currentPlayer.setConnection(connection);
-        sysInput = new BufferedReader(new InputStreamReader(System.in));
+        sysInput = new BufferedReader(new InputStreamReader(inputStream));
         BasicDTO dto = objectMapper.readValue(connection.receive(), BasicDTO.class);
         currentPlayer.setPlayerId(dto.getData());
         System.out.println("Welcome Player " + currentPlayer.getPlayerId() + ". What's your name?");
