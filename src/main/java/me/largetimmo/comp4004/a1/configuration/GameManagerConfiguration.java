@@ -33,8 +33,8 @@ public class GameManagerConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "app.mode",havingValue = "server")
-    public ServerGameManager getServerGameManager(ObjectMapper mapper){
-        return new ServerGameManager(mapper);
+    public ServerGameManager getServerGameManager(ObjectMapper mapper, PlayerDTOMapper playerDTOMapper){
+        return new ServerGameManager(mapper,playerDTOMapper);
     }
 
     @Bean

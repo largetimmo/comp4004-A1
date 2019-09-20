@@ -32,7 +32,7 @@ public class ClientGameManager {
 
     private InputStream inputStream;
 
-    public ClientGameManager(ObjectMapper objectMapper,PlayerDTOMapper playerDTOMapper,InputStream inputStream) {
+    public ClientGameManager(ObjectMapper objectMapper, PlayerDTOMapper playerDTOMapper, InputStream inputStream) {
         this.objectMapper = objectMapper;
         this.playerDTOMapper = playerDTOMapper;
         this.inputStream = inputStream;
@@ -56,7 +56,7 @@ public class ClientGameManager {
         while (true) {
             System.out.println("Are you ready? (y/N)");
             readyRes = sysInput.readLine();
-            if (readyRes.toLowerCase().equals("y")){
+            if (readyRes.toLowerCase().equals("y")) {
                 break;
             }
         }
@@ -64,21 +64,44 @@ public class ClientGameManager {
         playerReadyDTO.setAction(DTOAction.READY);
         playerReadyDTO.setType("String");
         playerReadyDTO.setData(currentPlayer.getPlayerId());
+        listenToServer(currentPlayer.getConnection().getReader());
         connection.send(objectMapper.writeValueAsString(playerReadyDTO));
     }
 
     public void messageHandler(String str) throws IOException {
-        BasicDTO dto = objectMapper.readValue(str,BasicDTO.class);
-        switch (dto.getAction()){
+        BasicDTO dto = objectMapper.readValue(str, BasicDTO.class);
+        switch (dto.getAction()) {
             case SYNC_PLAYER:
                 handleSyncPlayer(dto);
+                break;
+            case READY:
+                handleReady(dto);
+                break;
+            default:
                 break;
         }
     }
 
     public void handleSyncPlayer(BasicDTO dto) throws IOException {
-        List<PlayerDTO> playerDTOS = objectMapper.readValue(dto.getData(),new TypeReference<ArrayList<PlayerDTO>>(){});
+        List<PlayerDTO> playerDTOS = objectMapper.readValue(dto.getData(), new TypeReference<ArrayList<PlayerDTO>>(){});
         players = playerDTOS.stream().map(playerDTOMapper::map).collect(Collectors.toList());
+    }
+
+    public void handleReady(BasicDTO dto){
+        System.out.println("All players are ready");
+    }
+
+    public void listenToServer(BufferedReader br){
+        new Thread(()->{
+            while (true){
+                try {
+                    String line = br.readLine();
+                    messageHandler(line);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
 

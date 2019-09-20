@@ -14,4 +14,7 @@ public class PlayerBO {
     private ScoreSheetBO scoreSheet;
 
     private Connection connection;
+
+    private Boolean ready = false;
+
 }
