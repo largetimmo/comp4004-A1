@@ -5,21 +5,24 @@ import lombok.Data;
 @Data
 public class UpperSectionGameScore {
 
-    private Integer aces;
+    private Integer aces = 0;
 
-    private Integer twos;
+    private Integer twos = 0;
 
-    private Integer threes;
+    private Integer threes = 0;
 
-    private Integer fours;
+    private Integer fours = 0;
 
-    private Integer fives;
+    private Integer fives = 0;
 
-    private Integer sixes;
+    private Integer sixes = 0;
 
-    private Integer subTotal;
+    private Integer total = 0;
 
-    private Boolean bonus;
-
-    private Integer total;
+    public void calculateTotal(){
+        total = aces + twos + threes + fours + fives + sixes;
+        if(total >= 63){
+            total += 35;
+        }
+    }
 }
