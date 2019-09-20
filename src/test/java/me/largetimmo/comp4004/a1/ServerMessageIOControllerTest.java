@@ -1,5 +1,8 @@
 package me.largetimmo.comp4004.a1;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import me.largetimmo.comp4004.a1.configuration.dto.BasicDTO;
+import me.largetimmo.comp4004.a1.configuration.dto.DTOAction;
 import me.largetimmo.comp4004.a1.controller.ServerMessageIOController;
 import me.largetimmo.comp4004.a1.service.ServerGameManager;
 import me.largetimmo.comp4004.a1.service.bo.Connection;
@@ -50,11 +53,14 @@ public class ServerMessageIOControllerTest {
         Assert.assertNotNull(clientBR.readLine());
 
         //TEST Client send ---> Server
-        clientBW.write("I am client\n");
+        BasicDTO dto = new BasicDTO();
+        dto.setAction(DTOAction.READY);
+        dto.setType("String");
+        clientBW.write(new ObjectMapper().writeValueAsString(dto));
+        clientBW.newLine();
         clientBW.flush();
         Thread.sleep(1000);
-        Assert.assertTrue(connection.hasData());
-        Assert.assertEquals("I am client",connection.receive());
+        Assert.assertTrue(playerBO.getReady());
 
     }
 
