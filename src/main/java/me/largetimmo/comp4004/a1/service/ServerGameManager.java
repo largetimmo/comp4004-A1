@@ -253,8 +253,8 @@ public class ServerGameManager {
         player.setReady(true);
         player.setPlayerName(dto.getData());
         Long playerNotReady = players.stream().filter(p -> !p.getReady()).count();
-        sendScoreBoardToAllPlayer();
-        if (playerNotReady == 0) {
+        if (playerNotReady == 0 && players.size() == 3) {
+            sendScoreBoardToAllPlayer();
             BasicDTO basicDTO = new BasicDTO();
             basicDTO.setAction(DTOAction.READY);
             sendDataToAll(objectMapper.writeValueAsString(dto));
