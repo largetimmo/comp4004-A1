@@ -78,6 +78,9 @@ public class ClientGameManager {
             case READY:
                 handleReady(dto);
                 break;
+            case START_ROUND:
+                handleStartRound(dto);
+                break;
             default:
                 break;
         }
@@ -94,6 +97,14 @@ public class ClientGameManager {
 
     public void handleReady(BasicDTO dto){
         System.out.println("All players are ready");
+    }
+
+    public void handleStartRound(BasicDTO dto) throws IOException {
+        System.out.println("Press <<ENTER>> to start next round.");
+        sysInput.readLine();
+        BasicDTO startDTO = new BasicDTO();
+        startDTO.setAction(DTOAction.START_ROUND);
+        currentPlayer.getConnection().send(objectMapper.writeValueAsString(startDTO));
     }
 
     public void listenToServer(BufferedReader br){
