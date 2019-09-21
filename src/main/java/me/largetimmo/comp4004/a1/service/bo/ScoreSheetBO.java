@@ -5,7 +5,16 @@ import lombok.Data;
 @Data
 public class ScoreSheetBO {
 
-    private UpperSectionGameScore upperSection;
+    private UpperSectionGameScore upperSection = new UpperSectionGameScore();
 
-    private LowerSectionGameScore lowerSection;
+    private LowerSectionGameScore lowerSection = new LowerSectionGameScore();
+
+    private Integer total = 0;
+
+    public void calculateTotal(){
+        upperSection.calculateTotal();
+        lowerSection.calculateTotal();
+        total = upperSection.getTotal() + lowerSection.getTotal();
+    }
+
 }
