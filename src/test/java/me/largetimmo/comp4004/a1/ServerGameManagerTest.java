@@ -50,13 +50,20 @@ public class ServerGameManagerTest {
 
     @Test
     public void handleMessage() throws Exception{
-        File f = TestUtil.createTempFileWithContent(Arrays.asList("kyle","y"));
-        clientGameManager = Mockito.spy(new ClientGameManager(objectMapper,playerDTOMapper,new FileInputStream(f)));
+        File f1 = TestUtil.createTempFileWithContent(Arrays.asList("kyle1","y"));
+        File f2 = TestUtil.createTempFileWithContent(Arrays.asList("kyle2","y"));
+        File f3 = TestUtil.createTempFileWithContent(Arrays.asList("kyle3","y"));
+        clientGameManager = Mockito.spy(new ClientGameManager(objectMapper,playerDTOMapper,new FileInputStream(f1)));
         clientMessageIOController = Mockito.spy(new ClientMessageIOController("localhost", 39989, clientGameManager));
+        ClientGameManager clientGameManager2 = Mockito.spy(new ClientGameManager(objectMapper,playerDTOMapper,new FileInputStream(f2)));
+        ClientMessageIOController clientMessageIOController2 = Mockito.spy(new ClientMessageIOController("localhost", 39989, clientGameManager2));
+        ClientGameManager clientGameManager3 = Mockito.spy(new ClientGameManager(objectMapper,playerDTOMapper,new FileInputStream(f3)));
+        ClientMessageIOController clientMessageIOController3 = Mockito.spy(new ClientMessageIOController("localhost", 39989, clientGameManager3));
         Thread.sleep(1000);
         Mockito.verify(clientGameManager,Mockito.times(1)).handleReady(Mockito.any());
-        Assert.assertEquals(clientGameManager.getPlayers().size(),1);
-        Mockito.verify(clientGameManager,Mockito.times(1)).printScoreBoard(Mockito.any());
+        Assert.assertEquals(clientGameManager.getPlayers().size(),3);
+        Mockito.verify(clientGameManager,Mockito.times(1)).handleSyncPlayer(Mockito.any());
+        Mockito.verify(clientGameManager,Mockito.times(3)).printScoreBoard(Mockito.any());
 
     }
 
