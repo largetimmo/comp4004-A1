@@ -77,7 +77,7 @@ public class ServerGameManager {
 
     public void calculateScoreForPlayer(PlayerBO player, List<Integer> dices, ScoreCategory category) {
         Integer points = calculateScore(dices, category);
-        if (category == ScoreCategory.YAHTZEE && player.getScoreSheet().getLowerSection().getYahtzee() != 0 && points != 0) {
+        if (category == ScoreCategory.YAHTZEE && player.getScoreSheet().getLowerSection().getYahtzee() == 50 && points != 0) {
             player.getScoreSheet().getLowerSection().setYahtzeeBonus(player.getScoreSheet().getLowerSection().getYahtzeeBonus() + 1);
         } else {
             switch (category) {
