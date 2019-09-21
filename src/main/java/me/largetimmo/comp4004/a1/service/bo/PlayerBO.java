@@ -15,6 +15,8 @@ public class PlayerBO {
 
     private Connection connection;
 
+    private Integer round = 0;
+
     private Boolean ready = false;
 
 }
