@@ -56,6 +56,7 @@ public class ServerGameManagerTest {
         Thread.sleep(1000);
         Mockito.verify(clientGameManager,Mockito.times(1)).handleReady(Mockito.any());
         Assert.assertEquals(clientGameManager.getPlayers().size(),1);
+        Mockito.verify(clientGameManager,Mockito.times(1)).printScoreBoard(Mockito.any());
 
     }
 
