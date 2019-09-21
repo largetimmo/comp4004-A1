@@ -251,6 +251,7 @@ public class ServerGameManager {
     public void handleReady(String playerId, BasicDTO dto) throws JsonProcessingException {
         PlayerBO player = players.stream().filter(p -> p.getPlayerId().equals(playerId)).findAny().get();
         player.setReady(true);
+        player.setPlayerName(dto.getData());
         Long playerNotReady = players.stream().filter(p -> !p.getReady()).count();
         sendScoreBoardToAllPlayer();
         if (playerNotReady == 0) {

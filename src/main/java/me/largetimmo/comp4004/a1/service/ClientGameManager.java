@@ -63,7 +63,7 @@ public class ClientGameManager {
         BasicDTO playerReadyDTO = new BasicDTO();
         playerReadyDTO.setAction(DTOAction.READY);
         playerReadyDTO.setType("String");
-        playerReadyDTO.setData(currentPlayer.getPlayerId());
+        playerReadyDTO.setData(currentPlayer.getPlayerName());
         listenToServer(currentPlayer.getConnection().getReader());
         connection.send(objectMapper.writeValueAsString(playerReadyDTO));
     }
