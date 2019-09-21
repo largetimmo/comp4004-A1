@@ -6,5 +6,6 @@ public enum DTOAction {
     ACTION,
     SYNC_PLAYER,
     READY,
-    HELLO
+    HELLO,
+    START_ROUND
 }

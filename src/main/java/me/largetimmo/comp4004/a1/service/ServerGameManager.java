@@ -248,7 +248,7 @@ public class ServerGameManager {
 
     }
 
-    public void handleReady(String playerId, BasicDTO dto) throws JsonProcessingException {
+    public void handleReady(String playerId, BasicDTO dto) throws IOException {
         PlayerBO player = players.stream().filter(p -> p.getPlayerId().equals(playerId)).findAny().get();
         player.setReady(true);
         player.setPlayerName(dto.getData());
@@ -258,8 +258,15 @@ public class ServerGameManager {
             BasicDTO basicDTO = new BasicDTO();
             basicDTO.setAction(DTOAction.READY);
             sendDataToAll(objectMapper.writeValueAsString(dto));
+            tellPlayerRoundStart(players.get(0).getPlayerId());
         }
 
+    }
+    public void tellPlayerRoundStart(String playerId) throws IOException {
+        PlayerBO player = players.stream().filter(p -> p.getPlayerId().equals(playerId)).findAny().get();
+        BasicDTO basicDTO = new BasicDTO();
+        basicDTO.setAction(DTOAction.START_ROUND);
+        player.getConnection().send(objectMapper.writeValueAsString(basicDTO));
     }
 
     private void sendScoreBoardToAllPlayer() {
