@@ -9,12 +9,12 @@ import me.largetimmo.comp4004.a1.configuration.dto.BasicDTO;
 import me.largetimmo.comp4004.a1.configuration.dto.DTOAction;
 import me.largetimmo.comp4004.a1.configuration.dto.PlayerDTO;
 import me.largetimmo.comp4004.a1.configuration.dto.mapper.PlayerDTOMapper;
-import me.largetimmo.comp4004.a1.controller.ServerMessageIOController;
 import me.largetimmo.comp4004.a1.service.bo.*;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -32,14 +32,17 @@ public class ServerGameManager {
 
     private final Object scoreBoardLock = null;
 
-    public ServerGameManager(ObjectMapper objectMapper,PlayerDTOMapper playerDTOMapper) {
+    private final List<ScoreCategory> upperSection = new ArrayList<>(Arrays.asList(ScoreCategory.ONES,
+            ScoreCategory.TWOS, ScoreCategory.THREES, ScoreCategory.FOURS, ScoreCategory.FIVES, ScoreCategory.SIXES));
+
+    public ServerGameManager(ObjectMapper objectMapper, PlayerDTOMapper playerDTOMapper) {
         players = new ArrayList<>();
         this.objectMapper = objectMapper;
         this.playerDTOMapper = playerDTOMapper;
     }
 
-    public PlayerBO initPlayer(Socket socket){
-        if (socket.isClosed()){
+    public PlayerBO initPlayer(Socket socket) {
+        if (socket.isClosed()) {
             log.error("Connection is already closed. Failed to init player. Server needs to restart");
             throw new RuntimeException("Failed to init player.");
         }
@@ -51,7 +54,7 @@ public class ServerGameManager {
             connection.setWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
             connection.setReader(new BufferedReader(new InputStreamReader(socket.getInputStream())));
         } catch (IOException e) {
-            log.warn("Unable to initialize connection.",e);
+            log.warn("Unable to initialize connection.", e);
         }
         playerBO.setConnection(connection);
         ScoreSheetBO scoreSheet = new ScoreSheetBO();
@@ -66,33 +69,199 @@ public class ServerGameManager {
         try {
             connection.send(objectMapper.writeValueAsString(helloDTO));
         } catch (IOException e) {
-            log.error("Failed to communicate with client",e);
+            log.error("Failed to communicate with client", e);
         }
-        listenToClient(playerBO.getConnection().getReader(),playerBO.getPlayerId());
+        listenToClient(playerBO.getConnection().getReader(), playerBO.getPlayerId());
         return playerBO;
     }
+
+    public void calculateScoreForPlayer(PlayerBO player, List<Integer> dices, ScoreCategory category) {
+        Integer points = calculateScore(dices, category);
+        if (category == ScoreCategory.YAHTZEE && player.getScoreSheet().getLowerSection().getYahtzee() != 0 && points != 0) {
+            player.getScoreSheet().getLowerSection().setYahtzeeBonus(player.getScoreSheet().getLowerSection().getYahtzeeBonus() + 1);
+        } else {
+            switch (category) {
+                case ONES:
+                    player.getScoreSheet().getUpperSection().setAces(points);
+                    break;
+                case TWOS:
+                    player.getScoreSheet().getUpperSection().setTwos(points);
+                    break;
+                case THREES:
+                    player.getScoreSheet().getUpperSection().setThrees(points);
+                    break;
+
+                case FOURS:
+                    player.getScoreSheet().getUpperSection().setFours(points);
+                    break;
+
+                case FIVES:
+                    player.getScoreSheet().getUpperSection().setFives(points);
+                    break;
+
+                case SIXES:
+                    player.getScoreSheet().getUpperSection().setSixes(points);
+                    break;
+
+                case THREE_OF_A_KIND:
+                    player.getScoreSheet().getLowerSection().setThreeOfAKind(points);
+                    break;
+
+                case FOUR_OF_A_KIND:
+                    player.getScoreSheet().getLowerSection().setFourOfAKind(points);
+                    break;
+
+                case FULL_HOUSE:
+                    player.getScoreSheet().getLowerSection().setFullHouse(points);
+                    break;
+
+                case SMALL_STRAIGHT:
+                    player.getScoreSheet().getLowerSection().setSmallStraight(points);
+                    break;
+
+                case LARGE_STRAIGHT:
+                    player.getScoreSheet().getLowerSection().setLargeStraight(points);
+                    break;
+
+                case YAHTZEE:
+                    player.getScoreSheet().getLowerSection().setYahtzee(points);
+                    break;
+
+                case CHANCE:
+                    player.getScoreSheet().getLowerSection().setChance(points);
+                    break;
+
+                default:
+                    return;
+            }
+        }
+        player.getScoreSheet().calculateTotal();
+    }
+
+    public Integer calculateScore(List<Integer> dices, ScoreCategory category) {
+        switch (category) {
+            case ONES:
+                return (int) dices.stream().filter(d -> d == 1).count();
+            case TWOS:
+                return (int) dices.stream().filter(d -> d == 2).count() * 2;
+            case THREES:
+                return (int) dices.stream().filter(d -> d == 3).count() * 3;
+            case FOURS:
+                return (int) dices.stream().filter(d -> d == 4).count() * 4;
+            case FIVES:
+                return (int) dices.stream().filter(d -> d == 5).count() * 5;
+            case SIXES:
+                return (int) dices.stream().filter(d -> d == 6).count() * 6;
+            case THREE_OF_A_KIND:
+                List<Integer> sortedDice = dices.stream().sorted().collect(Collectors.toList());
+                for (int i = 0; i < 3; i++) {
+                    List<Integer> subArr = sortedDice.subList(i, i + 3);
+                    boolean valid = true;
+                    for (int j = 0; j < 2; j++) {
+                        if (subArr.get(j) != subArr.get(j + 1)) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if (valid) {
+                        return sum(dices);
+                    }
+                }
+                return 0;
+            case FOUR_OF_A_KIND:
+                sortedDice = dices.stream().sorted().collect(Collectors.toList());
+                for (int i = 0; i < 2; i++) {
+                    List<Integer> subArr = sortedDice.subList(i, i + 4);
+                    boolean valid = true;
+                    for (int j = 0; j < 3; j++) {
+                        if (subArr.get(j) != subArr.get(j + 1)) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if (valid) {
+                        return sum(dices);
+                    }
+                }
+                return 0;
+            case FULL_HOUSE:
+                sortedDice = dices.stream().sorted().collect(Collectors.toList());
+                List<Integer> threeDices = sortedDice.subList(0, 3);
+                List<Integer> twoDices = sortedDice.subList(3, 5);
+                if (threeDices.stream().distinct().count() == 1 && twoDices.stream().distinct().count() == 1) {
+                    return 25;
+                }
+                twoDices = sortedDice.subList(0, 2);
+                threeDices = sortedDice.subList(2, 5);
+                if (threeDices.stream().distinct().count() == 1 && twoDices.stream().distinct().count() == 1) {
+                    return 25;
+                }
+                return 0;
+            case SMALL_STRAIGHT:
+                sortedDice = dices.stream().sorted().distinct().collect(Collectors.toList());
+                if (sortedDice.size() < 4) {
+                    return 0;
+                }
+                for (int i = 0; i < sortedDice.size() - 3; i++) {
+                    boolean valid = true;
+                    for (int j = i; j < 3 + i; j++) {
+                        if (sortedDice.get(j) != sortedDice.get(j + 1) - 1) {
+                            valid = false;
+                        }
+                    }
+                    if (valid) {
+                        return 30;
+                    }
+                }
+            case LARGE_STRAIGHT:
+                sortedDice = dices.stream().sorted().distinct().collect(Collectors.toList());
+                if (sortedDice.size() != 5) {
+                    return 0;
+                }
+                for (int i = 0; i < 4; i++) {
+                    if (sortedDice.get(i) != sortedDice.get(i + 1) - 1) {
+                        return 0;
+                    }
+                }
+                return 40;
+            case YAHTZEE:
+                if (dices.stream().distinct().count() == 1) {
+                    return 50;
+                } else {
+                    return 0;
+                }
+            case CHANCE:
+                return sum(dices);
+            default:
+                return 0;
+
+        }
+    }
+
     public void handleMessage(String playerId, String msg) throws IOException {
-        BasicDTO dto = objectMapper.readValue(msg,BasicDTO.class);
-        switch (dto.getAction()){
+        BasicDTO dto = objectMapper.readValue(msg, BasicDTO.class);
+        switch (dto.getAction()) {
             case READY:
-                handleReady(playerId,dto);
+                handleReady(playerId, dto);
                 break;
         }
 
     }
+
     public void handleReady(String playerId, BasicDTO dto) throws JsonProcessingException {
-        PlayerBO player = players.stream().filter(p->p.getPlayerId().equals(playerId)).findAny().get();
+        PlayerBO player = players.stream().filter(p -> p.getPlayerId().equals(playerId)).findAny().get();
         player.setReady(true);
-        Long playerNotReady = players.stream().filter(p->!p.getReady()).count();
+        Long playerNotReady = players.stream().filter(p -> !p.getReady()).count();
         sendScoreBoardToAllPlayer();
-        if (playerNotReady == 0){
+        if (playerNotReady == 0) {
             BasicDTO basicDTO = new BasicDTO();
             basicDTO.setAction(DTOAction.READY);
             sendDataToAll(objectMapper.writeValueAsString(dto));
         }
 
     }
-    private void sendScoreBoardToAllPlayer(){
+
+    private void sendScoreBoardToAllPlayer() {
         BasicDTO dto = new BasicDTO();
         dto.setAction(DTOAction.SYNC_PLAYER);
         dto.setType(ArrayList.class.getName());
@@ -103,11 +272,10 @@ public class ServerGameManager {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
     }
 
-    private void sendDataToAll(String data){
-        for (PlayerBO playerBO : players){
+    private void sendDataToAll(String data) {
+        for (PlayerBO playerBO : players) {
             try {
                 playerBO.getConnection().send(data);
             } catch (IOException e) {
@@ -115,14 +283,26 @@ public class ServerGameManager {
             }
         }
     }
-    private void listenToClient(BufferedReader br, String playerId){
-        new Thread(()->{
+
+    private void listenToClient(BufferedReader br, String playerId) {
+        new Thread(() -> {
             try {
                 String msg = br.readLine();
-                handleMessage(playerId,msg);
+                handleMessage(playerId, msg);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    private Integer sum(List<Integer> nums) {
+        if (nums == null) {
+            return 0;
+        }
+        int total = 0;
+        for (Integer i : nums) {
+            total += i;
+        }
+        return total;
     }
 }
