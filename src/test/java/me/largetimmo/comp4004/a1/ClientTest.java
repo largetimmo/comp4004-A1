@@ -7,6 +7,7 @@ import me.largetimmo.comp4004.a1.configuration.dto.DTOAction;
 import me.largetimmo.comp4004.a1.configuration.dto.PlayerDTO;
 import me.largetimmo.comp4004.a1.controller.ClientMessageIOController;
 import me.largetimmo.comp4004.a1.service.ClientGameManager;
+import me.largetimmo.comp4004.a1.service.bo.ScoreSheetBO;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -100,6 +101,10 @@ public class ClientTest {
         players.add(player1);
         players.add(player2);
         players.add(player3);
+        ScoreSheetBO scoreSheetBO = new ScoreSheetBO();
+        player1.setScoreSheet(scoreSheetBO);
+        player2.setScoreSheet(scoreSheetBO);
+        player3.setScoreSheet(scoreSheetBO);
 
         BasicDTO dto = new BasicDTO();
         dto.setAction(DTOAction.SYNC_PLAYER);
