@@ -1,6 +1,7 @@
 package me.largetimmo.comp4004.a1;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.largetimmo.comp4004.a1.configuration.dto.BasicDTO;
 import me.largetimmo.comp4004.a1.configuration.dto.mapper.PlayerDTOMapper;
 import me.largetimmo.comp4004.a1.controller.ClientMessageIOController;
 import me.largetimmo.comp4004.a1.controller.ServerMessageIOController;
@@ -74,7 +75,7 @@ public class GameAutoTest {
 
     @BeforeClass
     public static void setupInput(){
-        inputFile1 = TestUtil.createTempFileWithContent(Arrays.asList("Kyle1", "y","","1"));
+        inputFile1 = TestUtil.createTempFileWithContent(Arrays.asList("Kyle1", "y","","1","0 1 2 3 4"));
         inputFile2 = TestUtil.createTempFileWithContent(Arrays.asList("Kyle2", "y"));
         inputFile3 = TestUtil.createTempFileWithContent(Arrays.asList("Kyle3", "y"));
     }
@@ -164,6 +165,10 @@ public class GameAutoTest {
             Assert.assertEquals(dices.getValue().get(i), serverGameManager.getPlayers().get(0).getCurrentDice().get(i));
         }
         Mockito.verify(clientGameManager1,Mockito.times(1)).printInstructionForSectionOne();
+        ArgumentCaptor<BasicDTO> dtoArgumentCaptor  = ArgumentCaptor.forClass(BasicDTO.class);
+        Mockito.verify(serverGameManager,Mockito.times(1)).handleKeepDice(Mockito.eq(firstPlayerId),dtoArgumentCaptor.capture());
+        Assert.assertEquals("0,1,2,3,4",dtoArgumentCaptor.getValue().getData());
+
 
 
     }
