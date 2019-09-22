@@ -23,4 +23,16 @@ public class TestUtil {
         }
         return null;
     }
+
+    public static void addLinesTOFile(File f, List<String> lines) throws IOException{
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f)));
+        for (String line: lines){
+            bw.write(line);
+            if(!line.contains("\n")){
+                bw.newLine();
+            }
+        }
+        bw.flush();
+        bw.close();
+    }
 }
