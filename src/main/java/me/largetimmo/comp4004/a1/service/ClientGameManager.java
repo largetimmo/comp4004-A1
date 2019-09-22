@@ -9,6 +9,7 @@ import me.largetimmo.comp4004.a1.configuration.dto.PlayerDTO;
 import me.largetimmo.comp4004.a1.configuration.dto.mapper.PlayerDTOMapper;
 import me.largetimmo.comp4004.a1.service.bo.Connection;
 import me.largetimmo.comp4004.a1.service.bo.PlayerBO;
+import me.largetimmo.comp4004.a1.service.bo.ScoreCategory;
 
 import java.io.*;
 import java.net.Socket;
@@ -33,6 +34,8 @@ public class ClientGameManager {
     private PlayerDTOMapper playerDTOMapper;
 
     private InputStream inputStream;
+
+    private List<ScoreCategory> filled = new ArrayList<>();
 
     public ClientGameManager(ObjectMapper objectMapper, PlayerDTOMapper playerDTOMapper, InputStream inputStream) {
         this.objectMapper = objectMapper;
@@ -83,6 +86,7 @@ public class ClientGameManager {
                 handleStartRound(dto);
                 break;
             case ROLL_DICE:
+            case HOLD_DICE:
                 handleRollDice(dto);
                 break;
             default:
@@ -114,6 +118,10 @@ public class ClientGameManager {
         String diceStr = dto.getData();
         List<Integer> dices = Arrays.stream(diceStr.split(",")).map(Integer::parseInt).collect(Collectors.toList());
         printDice(dices);
+        printMenuAndGetInput();
+    }
+
+    public void printMenuAndGetInput() throws IOException {
         printMenu();
         String selection = "";
         while (true){
@@ -125,38 +133,122 @@ public class ClientGameManager {
                 break;
             }
         }
-        switch (selection){
-            case "1":
-                List<Integer> holdDices;
-                while (true){
-                    printInstructionForSectionOne();
-                    String input =  sysInput.readLine();
-                    if(input == null || input.isEmpty()){
-                        holdDices = new ArrayList<>();
+        if (selection.equals("1")) {
+            List<Integer> holdDices;
+            while (true) {
+                printInstructionForSectionOne();
+                String input = sysInput.readLine();
+                if (input == null || input.isEmpty()) {
+                    holdDices = new ArrayList<>();
+                    break;
+                }
+                holdDices = Arrays.stream(input.split(" ")).map(Integer::parseInt).collect(Collectors.toList());
+                boolean invalidIndex = holdDices.stream().anyMatch(i -> i > 4 || i < 0);
+                if (invalidIndex || holdDices.size() > 5 || holdDices.size() != holdDices.stream().distinct().count()) {
+                    System.out.println("Invalid index(es). Please try again.");
+                } else {
+                    break;
+                }
+            }
+            BasicDTO holdDTO = new BasicDTO();
+            holdDTO.setAction(DTOAction.HOLD_DICE);
+            holdDTO.setType("String");
+            StringBuilder sb = new StringBuilder();
+            for (Integer num : holdDices) {
+                sb.append(num);
+                sb.append(",");
+            }
+            if (sb.length() > 0) {
+                sb.deleteCharAt(sb.length() - 1);
+            }
+            holdDTO.setData(sb.toString());
+            currentPlayer.getConnection().send(objectMapper.writeValueAsString(holdDTO));
+        } else if (selection.equals("2")) {
+            BasicDTO holdDTO = new BasicDTO();
+            holdDTO.setAction(DTOAction.HOLD_DICE);
+            holdDTO.setType("String");
+            holdDTO.setData("");
+            currentPlayer.getConnection().send(objectMapper.writeValueAsString(holdDTO));
+        } else if (selection.equals("3")) {
+            System.out.println("What category do you want put your score in ?");
+            Integer categoryInt;
+            ScoreCategory scoreCategory = null;
+            while (true) {
+                String category = sysInput.readLine();
+                if (category == null || category.isEmpty()) {
+                    System.out.println("Invalid input. Please try again.");
+                    continue;
+                }
+                char[] chars = category.toCharArray();
+                boolean valid = true;
+                for (char c : chars) {
+                    if (c < '0' || c > '9') {
+                        System.out.println("Invalid input. Please try again.");
+                        valid = false;
                         break;
                     }
-                    holdDices = Arrays.stream(input.split(" ")).map(Integer::parseInt).collect(Collectors.toList());
-                    boolean invalidIndex  = holdDices.stream().anyMatch(i->i>4 || i < 0);
-                    if (invalidIndex || holdDices.size() > 5 || holdDices.size() != holdDices.stream().distinct().count()){
-                        System.out.println("Invalid index(es). Please try again.");
-                    }else{
+                }
+                if (!valid) {
+                    continue;
+                }
+                categoryInt = Integer.parseInt(category);
+                if (categoryInt > 13 || categoryInt < 0) {
+                    System.out.println("Invalid input. Please try again.");
+                    continue;
+                }
+                switch (categoryInt) {
+                    case 1:
+                        scoreCategory = ScoreCategory.ONES;
                         break;
-                    }
+                    case 2:
+                        scoreCategory = ScoreCategory.TWOS;
+                        break;
+                    case 3:
+                        scoreCategory = ScoreCategory.THREES;
+                        break;
+                    case 4:
+                        scoreCategory = ScoreCategory.FOURS;
+                        break;
+                    case 5:
+                        scoreCategory = ScoreCategory.FIVES;
+                        break;
+                    case 6:
+                        scoreCategory = ScoreCategory.SIXES;
+                        break;
+                    case 7:
+                        scoreCategory = ScoreCategory.THREE_OF_A_KIND;
+                        break;
+                    case 8:
+                        scoreCategory = ScoreCategory.FOUR_OF_A_KIND;
+                        break;
+                    case 9:
+                        scoreCategory = ScoreCategory.FULL_HOUSE;
+                        break;
+                    case 10:
+                        scoreCategory = ScoreCategory.SMALL_STRAIGHT;
+                        break;
+                    case 11:
+                        scoreCategory = ScoreCategory.LARGE_STRAIGHT;
+                        break;
+                    case 12:
+                        scoreCategory = ScoreCategory.YAHTZEE;
+                        break;
+                    case 13:
+                        scoreCategory = ScoreCategory.CHANCE;
+                        break;
+                    default:
+                        break;
                 }
-                BasicDTO holdDTO = new BasicDTO();
-                holdDTO.setAction(DTOAction.HOLD_DICE);
-                holdDTO.setType("String");
-                StringBuilder sb = new StringBuilder();
-                for(Integer num : holdDices){
-                    sb.append(num);
-                    sb.append(",");
+                if (!filled.contains(scoreCategory)) {
+                    break;
                 }
-                if(sb.length()>0){
-                    sb.deleteCharAt(sb.length()-1);
-                }
-                holdDTO.setData(sb.toString());
-                currentPlayer.getConnection().send(objectMapper.writeValueAsString(holdDTO));
-                break;
+            }
+            filled.add(scoreCategory);
+            BasicDTO basicDTO = new BasicDTO();
+            basicDTO.setAction(DTOAction.FILL);
+            basicDTO.setData("String");
+            basicDTO.setData(scoreCategory.toString());
+            currentPlayer.getConnection().send(objectMapper.writeValueAsString(basicDTO));
         }
     }
 

@@ -250,6 +250,8 @@ public class ServerGameManager {
             case HOLD_DICE:
                 handleKeepDice(playerId,dto);
                 break;
+            case FILL:
+                handleFillScore(playerId,dto);
         }
 
     }
@@ -323,6 +325,22 @@ public class ServerGameManager {
         player.getConnection().send(objectMapper.writeValueAsString(basicDTO));
 
     }
+    public void handleFillScore(String playerId, BasicDTO dto) throws IOException{
+        PlayerBO player = players.stream().filter(p -> p.getPlayerId().equals(playerId)).findAny().get();
+        ScoreCategory category = ScoreCategory.valueOf(dto.getData());
+        calculateScoreForPlayer(player,player.getCurrentDice(),category);
+        player.setRound(player.getRound()+1);
+        currentPlayer = (currentPlayer + 1) % (players.size() -1);//Next one
+        if(currentPlayer == players.size() -1 && player.getRound() == 13){
+            //TODO: finish game
+        }else{
+            sendScoreBoardToAllPlayer();
+            tellPlayerRoundStart(players.get(currentPlayer).getPlayerId());
+        }
+    }
+
+
+
     private void sendScoreBoardToAllPlayer() {
         BasicDTO dto = new BasicDTO();
         dto.setAction(DTOAction.SYNC_PLAYER);
