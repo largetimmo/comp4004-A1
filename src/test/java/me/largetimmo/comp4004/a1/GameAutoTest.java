@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -155,6 +156,15 @@ public class GameAutoTest {
         Mockito.verify(clientGameManager1,Mockito.times(1)).handleStartRound(Mockito.any());
         TestUtil.addLinesTOFile(inputFile1,Arrays.asList(""));
         Mockito.verify(serverGameManager,Mockito.times(1)).handleRollDice(Mockito.eq(firstPlayerId),Mockito.any());
+        Mockito.verify(clientGameManager1,Mockito.times(1)).handleRollDice(Mockito.any());
+        Mockito.verify(clientGameManager1,Mockito.times(1)).printMenu();
+        ArgumentCaptor<List> dices = ArgumentCaptor.forClass(List.class);
+        Mockito.verify(clientGameManager1,Mockito.times(1)).printDice(dices.capture());
+        for (int i =0; i < 5;i++){
+            //Make sure both server and client have the same position and the same value for each dice
+            Assert.assertEquals(dices.getValue().get(i), serverGameManager.getPlayers().get(0).getCurrentDice().get(i));
+        }
+
     }
 
 }
