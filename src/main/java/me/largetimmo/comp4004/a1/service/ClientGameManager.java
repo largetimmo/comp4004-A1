@@ -115,6 +115,29 @@ public class ClientGameManager {
         List<Integer> dices = Arrays.stream(diceStr.split(",")).map(Integer::parseInt).collect(Collectors.toList());
         printDice(dices);
         printMenu();
+        String selection = "";
+        while (true){
+            selection = sysInput.readLine();
+            if(!(selection.equals("1") || selection.equals("2") || selection.equals("3"))){
+                System.out.println("Invalid input. Please try again.");
+
+            }else{
+                break;
+            }
+        }
+        switch (selection){
+            case "1":
+                List<Integer> holdDices;
+                while (true){
+                    printInstructionForSectionOne();
+                    String input =  sysInput.readLine();
+                    if(input == null || input.isEmpty()){
+                        holdDices = new ArrayList<>();
+                        break;
+                    }
+                }
+                break;
+        }
     }
 
     public void listenToServer(BufferedReader br){
@@ -242,6 +265,9 @@ public class ClientGameManager {
         sb.append("\n");
         sb.append("(3) Score this round?\n");
         System.out.print(sb);
+    }
+    public void printInstructionForSectionOne(){
+        System.out.println("Please enter in the dice position (Start with 0 ^.^) the you want to hold. Please seperate each number with a <<SPACE>>: ");
     }
     public void printDice(List<Integer> dices){
         StringBuilder sb = new StringBuilder();
