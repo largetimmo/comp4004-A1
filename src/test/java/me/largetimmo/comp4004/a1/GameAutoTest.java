@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -153,7 +154,7 @@ public class GameAutoTest {
         Mockito.verify(serverGameManager,Mockito.times(1)).tellPlayerRoundStart(firstPlayerId);
         Mockito.verify(clientGameManager1,Mockito.times(1)).handleStartRound(Mockito.any());
         TestUtil.addLinesTOFile(inputFile1,Arrays.asList(""));
-        Mockito.verify(serverGameManager,Mockito.times(1)).handleRollDice(firstPlayerId,Mockito.any());
+        Mockito.verify(serverGameManager,Mockito.times(1)).handleRollDice(Mockito.eq(firstPlayerId),Mockito.any());
     }
 
 }
