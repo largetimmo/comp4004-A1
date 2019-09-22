@@ -247,6 +247,9 @@ public class ServerGameManager {
             case START_ROUND:
                 handleRollDice(playerId,dto);
                 break;
+            case HOLD_DICE:
+                handleKeepDice(playerId,dto);
+                break;
         }
 
     }
@@ -290,6 +293,35 @@ public class ServerGameManager {
         diceSB.deleteCharAt(diceSB.lastIndexOf(","));
         basicDTO.setData(diceSB.toString());
         player.getConnection().send(objectMapper.writeValueAsString(basicDTO));
+    }
+    public void handleKeepDice(String playerId, BasicDTO dto) throws IOException{
+        //dto data = {}  ==> reroll all
+        PlayerBO player = players.stream().filter(p -> p.getPlayerId().equals(playerId)).findAny().get();
+        String holdDiceStr = dto.getData();
+        List<Integer> holdIdx;
+        if(holdDiceStr == null || "".equals(holdDiceStr)){
+            holdIdx = new ArrayList<>();
+        }else{
+            holdIdx = Arrays.stream(holdDiceStr.split(",")).map(Integer::parseInt).collect(Collectors.toList());
+        }
+        for(int i =0; i< player.getCurrentDice().size();i++){
+            if(!holdIdx.contains(i)){
+                Integer newDice = random.nextInt(6)+1;
+                player.getCurrentDice().set(i,newDice);
+            }
+        }
+        BasicDTO basicDTO = new BasicDTO();
+        basicDTO.setAction(DTOAction.HOLD_DICE);
+        basicDTO.setType("String");
+        StringBuilder diceSB = new StringBuilder();
+        for(Integer dice: player.getCurrentDice()){
+            diceSB.append(dice);
+            diceSB.append(",");
+        }
+        diceSB.deleteCharAt(diceSB.lastIndexOf(","));
+        basicDTO.setData(diceSB.toString());
+        player.getConnection().send(objectMapper.writeValueAsString(basicDTO));
+
     }
     private void sendScoreBoardToAllPlayer() {
         BasicDTO dto = new BasicDTO();

@@ -135,7 +135,27 @@ public class ClientGameManager {
                         holdDices = new ArrayList<>();
                         break;
                     }
+                    holdDices = Arrays.stream(input.split(" ")).map(Integer::parseInt).collect(Collectors.toList());
+                    boolean invalidIndex  = holdDices.stream().anyMatch(i->i>4 || i < 0);
+                    if (invalidIndex || holdDices.size() > 5 || holdDices.size() != holdDices.stream().distinct().count()){
+                        System.out.println("Invalid index(es). Please try again.");
+                    }else{
+                        break;
+                    }
                 }
+                BasicDTO holdDTO = new BasicDTO();
+                holdDTO.setAction(DTOAction.HOLD_DICE);
+                holdDTO.setType("String");
+                StringBuilder sb = new StringBuilder();
+                for(Integer num : holdDices){
+                    sb.append(num);
+                    sb.append(",");
+                }
+                if(sb.length()>0){
+                    sb.deleteCharAt(sb.length()-1);
+                }
+                holdDTO.setData(sb.toString());
+                currentPlayer.getConnection().send(objectMapper.writeValueAsString(holdDTO));
                 break;
         }
     }
