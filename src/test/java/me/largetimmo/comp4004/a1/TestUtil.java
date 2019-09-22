@@ -25,14 +25,15 @@ public class TestUtil {
     }
 
     public static void addLinesTOFile(File f, List<String> lines) throws IOException{
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f)));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(f,true));
+        PrintWriter pw = new PrintWriter(bw);
         for (String line: lines){
-            bw.write(line);
+            pw.write(line);
             if(!line.contains("\n")){
-                bw.newLine();
+                pw.println();
             }
         }
-        bw.flush();
-        bw.close();
+        pw.flush();
+        pw.close();
     }
 }
