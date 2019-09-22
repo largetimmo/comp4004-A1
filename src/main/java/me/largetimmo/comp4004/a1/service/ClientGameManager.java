@@ -13,6 +13,7 @@ import me.largetimmo.comp4004.a1.service.bo.PlayerBO;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,6 +82,9 @@ public class ClientGameManager {
             case START_ROUND:
                 handleStartRound(dto);
                 break;
+            case ROLL_DICE:
+                handleRollDice(dto);
+                break;
             default:
                 break;
         }
@@ -105,6 +109,12 @@ public class ClientGameManager {
         BasicDTO startDTO = new BasicDTO();
         startDTO.setAction(DTOAction.START_ROUND);
         currentPlayer.getConnection().send(objectMapper.writeValueAsString(startDTO));
+    }
+    public void handleRollDice(BasicDTO dto) throws IOException{
+        String diceStr = dto.getData();
+        List<Integer> dices = Arrays.stream(diceStr.split(",")).map(Integer::parseInt).collect(Collectors.toList());
+        printDice(dices);
+        printMenu();
     }
 
     public void listenToServer(BufferedReader br){
@@ -221,6 +231,54 @@ public class ClientGameManager {
         sb.append(String.join("",Collections.nCopies(148,"-")));
         sb.append("|");
         System.out.println(sb);
+    }
+    public void printMenu(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("What action would you like to perform next?");
+        sb.append("\n");
+        sb.append("(1) Select dice to hold, and then re-roll the other dices?");
+        sb.append("\n");
+        sb.append("(2) Reroll all the dices?");
+        sb.append("\n");
+        sb.append("(3) Score this round?\n");
+        System.out.print(sb);
+    }
+    public void printDice(List<Integer> dices){
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.join("",Collections.nCopies(20," ")));
+        sb.append(String.join("",Collections.nCopies(5,"-")));
+        sb.append(String.join("",Collections.nCopies(5," ")));
+        sb.append(String.join("",Collections.nCopies(5,"-")));
+        sb.append(String.join("",Collections.nCopies(5," ")));
+        sb.append(String.join("",Collections.nCopies(5,"-")));
+        sb.append(String.join("",Collections.nCopies(5," ")));
+        sb.append(String.join("",Collections.nCopies(5,"-")));
+        sb.append(String.join("",Collections.nCopies(5," ")));
+        sb.append(String.join("",Collections.nCopies(5,"-")));
+        sb.append(String.join("",Collections.nCopies(5," ")));
+        sb.append("\n");
+        sb.append("You rolled: ");
+        sb.append(String.join("",Collections.nCopies(8," ")));
+        for (Integer dice : dices){
+            sb.append("| ");
+            sb.append(dice);
+            sb.append(" |");
+            sb.append(String.join("",Collections.nCopies(5," ")));
+        }
+        sb.append("\n");
+        sb.append(String.join("",Collections.nCopies(20," ")));
+        sb.append(String.join("",Collections.nCopies(5,"-")));
+        sb.append(String.join("",Collections.nCopies(5," ")));
+        sb.append(String.join("",Collections.nCopies(5,"-")));
+        sb.append(String.join("",Collections.nCopies(5," ")));
+        sb.append(String.join("",Collections.nCopies(5,"-")));
+        sb.append(String.join("",Collections.nCopies(5," ")));
+        sb.append(String.join("",Collections.nCopies(5,"-")));
+        sb.append(String.join("",Collections.nCopies(5," ")));
+        sb.append(String.join("",Collections.nCopies(5,"-")));
+        sb.append(String.join("",Collections.nCopies(5," ")));
+        System.out.println(sb);
+
     }
 
 
