@@ -74,7 +74,7 @@ public class GameAutoTest {
 
     @BeforeClass
     public static void setupInput(){
-        inputFile1 = TestUtil.createTempFileWithContent(Arrays.asList("Kyle1", "y"));
+        inputFile1 = TestUtil.createTempFileWithContent(Arrays.asList("Kyle1", "y","","1"));
         inputFile2 = TestUtil.createTempFileWithContent(Arrays.asList("Kyle2", "y"));
         inputFile3 = TestUtil.createTempFileWithContent(Arrays.asList("Kyle3", "y"));
     }
@@ -154,7 +154,6 @@ public class GameAutoTest {
         String firstPlayerId = serverGameManager.getPlayers().get(0).getPlayerId();
         Mockito.verify(serverGameManager,Mockito.times(1)).tellPlayerRoundStart(firstPlayerId);
         Mockito.verify(clientGameManager1,Mockito.times(1)).handleStartRound(Mockito.any());
-        TestUtil.addLinesTOFile(inputFile1,Arrays.asList(""));
         Mockito.verify(serverGameManager,Mockito.times(1)).handleRollDice(Mockito.eq(firstPlayerId),Mockito.any());
         Mockito.verify(clientGameManager1,Mockito.times(1)).handleRollDice(Mockito.any());
         Mockito.verify(clientGameManager1,Mockito.times(1)).printMenu();
@@ -164,6 +163,8 @@ public class GameAutoTest {
             //Make sure both server and client have the same position and the same value for each dice
             Assert.assertEquals(dices.getValue().get(i), serverGameManager.getPlayers().get(0).getCurrentDice().get(i));
         }
+        Mockito.verify(clientGameManager1,Mockito.times(1)).printInstructionForSectionOne();
+
 
     }
 
