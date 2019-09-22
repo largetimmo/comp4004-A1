@@ -3,6 +3,8 @@ package me.largetimmo.comp4004.a1.service.bo;
 import lombok.Data;
 
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class PlayerBO {
@@ -18,5 +20,7 @@ public class PlayerBO {
     private Integer round = 0;
 
     private Boolean ready = false;
+
+    private List<Integer> currentDice = new ArrayList<>();
 
 }

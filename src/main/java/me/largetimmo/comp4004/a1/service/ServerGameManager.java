@@ -13,15 +13,13 @@ import me.largetimmo.comp4004.a1.service.bo.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class ServerGameManager {
 
+    private Random random = new Random();
 
     @Getter
     private List<PlayerBO> players;
@@ -31,6 +29,8 @@ public class ServerGameManager {
     private PlayerDTOMapper playerDTOMapper;
 
     private final Object scoreBoardLock = null;
+
+    private int currentPlayer = 0;
 
     private final List<ScoreCategory> upperSection = new ArrayList<>(Arrays.asList(ScoreCategory.ONES,
             ScoreCategory.TWOS, ScoreCategory.THREES, ScoreCategory.FOURS, ScoreCategory.FIVES, ScoreCategory.SIXES));
@@ -244,6 +244,9 @@ public class ServerGameManager {
             case READY:
                 handleReady(playerId, dto);
                 break;
+            case START_ROUND:
+                handleRollDice(playerId,dto);
+                break;
         }
 
     }
@@ -269,6 +272,25 @@ public class ServerGameManager {
         player.getConnection().send(objectMapper.writeValueAsString(basicDTO));
     }
 
+    public void handleRollDice(String playerId, BasicDTO dto) throws IOException{
+        PlayerBO player = players.stream().filter(p -> p.getPlayerId().equals(playerId)).findAny().get();
+        List<Integer> dices = new ArrayList<>();
+        for(int i = 0; i< 5;i++){
+            dices.add(random.nextInt(6)+1);
+        }
+        player.setCurrentDice(dices);
+        BasicDTO basicDTO = new BasicDTO();
+        basicDTO.setAction(DTOAction.ROLL_DICE);
+        basicDTO.setType("String");
+        StringBuilder diceSB = new StringBuilder();
+        for(Integer dice: dices){
+            diceSB.append(dice);
+            diceSB.append(",");
+        }
+        diceSB.deleteCharAt(diceSB.lastIndexOf(","));
+        basicDTO.setData(diceSB.toString());
+        player.getConnection().send(objectMapper.writeValueAsString(basicDTO));
+    }
     private void sendScoreBoardToAllPlayer() {
         BasicDTO dto = new BasicDTO();
         dto.setAction(DTOAction.SYNC_PLAYER);
@@ -294,12 +316,15 @@ public class ServerGameManager {
 
     private void listenToClient(BufferedReader br, String playerId) {
         new Thread(() -> {
-            try {
-                String msg = br.readLine();
-                handleMessage(playerId, msg);
-            } catch (IOException e) {
-                e.printStackTrace();
+            while (true){
+                try {
+                    String msg = br.readLine();
+                    handleMessage(playerId, msg);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+
         }).start();
     }
 
