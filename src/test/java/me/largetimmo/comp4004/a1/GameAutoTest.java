@@ -78,8 +78,8 @@ public class GameAutoTest {
         Thread.sleep(1000);
         Mockito.verify(clientGameManager1,Mockito.times(1)).handleReady(Mockito.any());
         Assert.assertEquals(clientGameManager1.getPlayers().size(),3);
-        Mockito.verify(clientGameManager1,Mockito.times(1)).handleSyncPlayer(Mockito.any());
-        Mockito.verify(clientGameManager1,Mockito.times(3)).printScoreBoard(Mockito.any());
+        Mockito.verify(clientGameManager1,Mockito.times(2)).handleSyncPlayer(Mockito.any());
+        Mockito.verify(clientGameManager1,Mockito.times(6)).printScoreBoard(Mockito.any());
         Thread.sleep(1000);
         String firstPlayerId = serverGameManager.getPlayers().get(0).getPlayerId();
         Mockito.verify(serverGameManager,Mockito.times(1)).tellPlayerRoundStart(firstPlayerId);
@@ -93,13 +93,13 @@ public class GameAutoTest {
             //Make sure both server and client have the same position and the same value for each dice
             Assert.assertEquals(dices.getValue().get(i), serverGameManager.getPlayers().get(0).getCurrentDice().get(i));
         }
-        Mockito.verify(clientGameManager1,Mockito.times(1)).printInstructionForSectionOne();
-        ArgumentCaptor<BasicDTO> dtoArgumentCaptor  = ArgumentCaptor.forClass(BasicDTO.class);
-        Mockito.verify(serverGameManager,Mockito.times(1)).handleKeepDice(Mockito.eq(firstPlayerId),dtoArgumentCaptor.capture());
-        Assert.assertEquals("0,1,2,3,4",dtoArgumentCaptor.getValue().getData());
-
-
-
+//        Mockito.verify(clientGameManager1,Mockito.times(1)).printInstructionForSectionOne();
+//        ArgumentCaptor<BasicDTO> dtoArgumentCaptor  = ArgumentCaptor.forClass(BasicDTO.class);
+//        Mockito.verify(serverGameManager,Mockito.times(1)).handleKeepDice(Mockito.eq(firstPlayerId),dtoArgumentCaptor.capture());
+//        Assert.assertEquals("0,1,2,3,4",dtoArgumentCaptor.getValue().getData());
+        Mockito.verify(serverGameManager,Mockito.times(1)).handleFillScore(Mockito.eq(firstPlayerId),Mockito.any());
+        Mockito.verify(clientGameManager2,Mockito.times(1)).handleStartRound(Mockito.any());
+        Assert.assertNotEquals((int)serverGameManager.getPlayers().get(0).getScoreSheet().getUpperSection().getAces(),-1);
     }
 
 }
