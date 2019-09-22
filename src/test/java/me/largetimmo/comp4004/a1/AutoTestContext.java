@@ -26,11 +26,11 @@ public class AutoTestContext {
     }
     @Bean(name = "input2")
     public File inputFile2(){
-        return  TestUtil.createTempFileWithContent(Arrays.asList("Kyle2", "y"));
+        return  TestUtil.createTempFileWithContent(Arrays.asList("Kyle2", "y","","1","0 1 2","3","1"));
     }
     @Bean(name = "input3")
     public File inputFile3(){
-        return TestUtil.createTempFileWithContent(Arrays.asList("Kyle3", "y"));
+        return TestUtil.createTempFileWithContent(Arrays.asList("Kyle3", "y","","2","3","1"));
     }
 
     @Bean
