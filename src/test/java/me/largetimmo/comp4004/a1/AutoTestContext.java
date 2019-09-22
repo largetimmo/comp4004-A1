@@ -22,7 +22,7 @@ public class AutoTestContext {
 
     @Bean(name = "input1")
     public File inputFile1(){
-        return TestUtil.createTempFileWithContent(Arrays.asList("Kyle1", "y","","1","0 1 2 3 4","2"));
+        return TestUtil.createTempFileWithContent(Arrays.asList("Kyle1", "y","","3","1"));
     }
     @Bean(name = "input2")
     public File inputFile2(){
@@ -74,27 +74,27 @@ public class AutoTestContext {
     @Bean(name = "client-controller2")
     @DependsOn("serverController")
     public ClientMessageIOController clientMessageIOController2(@Qualifier("client2")ClientGameManager clientGameManager) throws Exception {
-        return new ClientMessageIOController("localhost", 36666, clientGameManager);
+        return Mockito.spy(new ClientMessageIOController("localhost", 36666, clientGameManager));
     }
 
     @Primary
     @Bean(name = "client2")
     @DependsOn("serverController")
     public ClientGameManager clientGameManager2(ObjectMapper objectMapper, PlayerDTOMapper playerDTOMapper,@Qualifier("input2")File inputFile2) throws Exception {
-        return new ClientGameManager(objectMapper, playerDTOMapper,new FileInputStream(inputFile2));
+        return Mockito.spy(new ClientGameManager(objectMapper, playerDTOMapper, new FileInputStream(inputFile2)));
     }
 
     @Primary
     @Bean(name = "client-controller3")
     @DependsOn("serverController")
     public ClientMessageIOController clientMessageIOController3(@Qualifier("client3")ClientGameManager clientGameManager) throws Exception {
-        return new ClientMessageIOController("localhost", 36666, clientGameManager);
+        return Mockito.spy(new ClientMessageIOController("localhost", 36666, clientGameManager));
     }
 
     @Primary
     @Bean(name = "client3")
     @DependsOn("serverController")
     public ClientGameManager clientGameManager3(ObjectMapper objectMapper, PlayerDTOMapper playerDTOMapper,@Qualifier("input3")File inputFile3) throws Exception {
-        return new ClientGameManager(objectMapper, playerDTOMapper,new FileInputStream(inputFile3));
+        return Mockito.spy(new ClientGameManager(objectMapper, playerDTOMapper, new FileInputStream(inputFile3)));
     }
 }
