@@ -330,7 +330,7 @@ public class ServerGameManager {
         ScoreCategory category = ScoreCategory.valueOf(dto.getData());
         calculateScoreForPlayer(player,player.getCurrentDice(),category);
         player.setRound(player.getRound()+1);
-        currentPlayer = (currentPlayer + 1) % (players.size() -1);//Next one
+        currentPlayer = ((currentPlayer + 1) % (players.size()));//Next one
         if(currentPlayer == players.size() -1 && player.getRound() == 13){
             //TODO: finish game
         }else{
