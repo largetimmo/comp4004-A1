@@ -75,6 +75,7 @@ public class GameAutoTest {
 
     @Test
     public void testGame() throws Exception{
+        Thread.sleep(1000);
         Mockito.verify(clientGameManager1,Mockito.times(1)).handleReady(Mockito.any());
         Assert.assertEquals(clientGameManager1.getPlayers().size(),3);
         Mockito.verify(clientGameManager1,Mockito.times(1)).handleSyncPlayer(Mockito.any());
