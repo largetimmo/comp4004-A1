@@ -15,6 +15,7 @@ public class PlayerDTOMapper {
         playerDTO.setPlayerId(bo.getPlayerId());
         playerDTO.setPlayerName(bo.getPlayerName());
         playerDTO.setScoreSheet(bo.getScoreSheet());
+        playerDTO.setRound(bo.getRound());
         return playerDTO;
     }
 
@@ -26,6 +27,7 @@ public class PlayerDTOMapper {
         playerBO.setPlayerId(dto.getPlayerId());
         playerBO.setScoreSheet(dto.getScoreSheet());
         playerBO.setPlayerName(dto.getPlayerName());
+        playerBO.setRound(dto.getRound());
         return playerBO;
     }
 

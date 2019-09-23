@@ -13,4 +13,6 @@ public class PlayerDTO {
 
     private ScoreSheetBO scoreSheet;
 
+    private Integer round = 0;
+
 }
