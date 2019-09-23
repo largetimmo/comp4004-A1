@@ -152,7 +152,32 @@ public class GameAutoTest {
 
     }
 
-   
+    @Test
+    public void gameShouldFinishAfter13Rounds()throws Exception{
+        for(int i =0;i<13;i++){
+            bw1.newLine();
+            bw1.write("3\n");
+            bw1.write(Integer.toString(i + 1));
+            bw1.newLine();
+            bw2.newLine();
+            bw2.write("3\n");
+            bw2.write(Integer.toString(i + 1));
+            bw2.newLine();
+            bw3.newLine();
+            bw3.write("3\n");
+            bw3.write(Integer.toString(i + 1));
+            bw3.newLine();
+        }
+        bw1.flush();
+        bw2.flush();
+        bw3.flush();
+        Thread.sleep(1000);
+        Mockito.verify(serverGameManager,Mockito.times(39)).tellPlayerRoundStart(Mockito.any());
+        Mockito.verify(clientGameManager1,Mockito.times(1)).handleFinish(Mockito.any());
+        Mockito.verify(clientGameManager2,Mockito.times(1)).handleFinish(Mockito.any());
+        Mockito.verify(clientGameManager3,Mockito.times(1)).handleFinish(Mockito.any());
+    }
+
 
 
 }
