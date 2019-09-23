@@ -70,36 +70,89 @@ public class GameAutoTest {
     @Qualifier("client3")
     private ClientGameManager clientGameManager3;
 
+    @Autowired
+    @Qualifier("userSim1")
+    private BufferedWriter bw1;
+
+    @Autowired
+    @Qualifier("userSim2")
+    private BufferedWriter bw2;
+
+    @Autowired
+    @Qualifier("userSim3")
+    private BufferedWriter bw3;
+
 
     @Test
-    public void testGame() throws Exception{
+    public void gameShouldStartWithFirstPlayer() throws Exception{
         Thread.sleep(1000);
-        Mockito.verify(clientGameManager1,Mockito.times(1)).handleReady(Mockito.any());
-        Assert.assertEquals(clientGameManager1.getPlayers().size(),3);
-        Mockito.verify(clientGameManager1,Mockito.times(4)).handleSyncPlayer(Mockito.any());
-        Mockito.verify(clientGameManager1,Mockito.times(12)).printScoreBoard(Mockito.any());
+        Mockito.verify(clientGameManager1,Mockito.times(1)).handleStartRound(Mockito.any());
+        Mockito.verify(clientGameManager1,Mockito.times(0)).handleRollDice(Mockito.any());
+        bw1.newLine();
+        bw1.flush();
         Thread.sleep(1000);
-        String firstPlayerId = serverGameManager.getPlayers().get(0).getPlayerId();
-        Mockito.verify(serverGameManager,Mockito.times(2)).tellPlayerRoundStart(firstPlayerId);
-        Mockito.verify(clientGameManager1,Mockito.times(2)).handleStartRound(Mockito.any());
-        Mockito.verify(serverGameManager,Mockito.times(2)).handleRollDice(Mockito.eq(firstPlayerId),Mockito.any());
-        Mockito.verify(clientGameManager1,Mockito.times(2)).handleRollDice(Mockito.any());
-        Mockito.verify(clientGameManager1,Mockito.times(2)).printMenu();
-        ArgumentCaptor<List> dices = ArgumentCaptor.forClass(List.class);
-        Mockito.verify(clientGameManager1,Mockito.times(2)).printDice(dices.capture());
-        for (int i =0; i < 5;i++){
-            //Make sure both server and client have the same position and the same value for each dice
-            Assert.assertEquals(dices.getValue().get(i), serverGameManager.getPlayers().get(0).getCurrentDice().get(i));
-        }
-        Mockito.verify(serverGameManager,Mockito.times(1)).handleFillScore(Mockito.eq(firstPlayerId),Mockito.any());
-        Mockito.verify(clientGameManager2,Mockito.times(1)).handleStartRound(Mockito.any());
-        Assert.assertNotEquals((int)serverGameManager.getPlayers().get(0).getScoreSheet().getUpperSection().getAces(),-1);
-        Mockito.verify(clientGameManager2,Mockito.times(1)).printInstructionForSectionOne();
-        ArgumentCaptor<BasicDTO> dtoArgumentCaptor  = ArgumentCaptor.forClass(BasicDTO.class);
-        Mockito.verify(serverGameManager,Mockito.times(2)).handleKeepDice(Mockito.any(),dtoArgumentCaptor.capture());
-        Assert.assertEquals("0,1,2",dtoArgumentCaptor.getAllValues().get(0).getData());
-        Assert.assertEquals("",dtoArgumentCaptor.getAllValues().get(1).getData());
-        Mockito.verify(clientGameManager3,Mockito.times(1)).handleReady(Mockito.any());
+        Mockito.verify(clientGameManager1,Mockito.times(1)).handleRollDice(Mockito.any());
     }
+
+    @Test
+    public void onlyOnePlayerWillReceiveStartRoundMessageAtATime()throws Exception{
+        Mockito.verify(clientGameManager1,Mockito.times(1)).handleStartRound(Mockito.any());
+        Mockito.verify(clientGameManager2,Mockito.times(0)).handleStartRound(Mockito.any());
+        Mockito.verify(clientGameManager3,Mockito.times(0)).handleStartRound(Mockito.any());
+    }
+
+    @Test
+    public void player1CanFinishHisRound() throws Exception{
+        bw1.write("\n3\n1\n");
+        bw1.flush();
+        Thread.sleep(1000);
+        Mockito.verify(clientGameManager1,Mockito.times(1)).handleStartRound(Mockito.any());
+        Mockito.verify(clientGameManager1,Mockito.times(1)).handleRollDice(Mockito.any());
+        Mockito.verify(serverGameManager,Mockito.times(1)).handleFillScore(Mockito.eq(clientGameManager1.getCurrentPlayer().getPlayerId()),Mockito.any());
+    }
+
+    @Test
+    public void playerHoldDicesShallWorkingCorrectly() throws Exception{
+        bw1.newLine();
+        bw1.flush();
+        Thread.sleep(1000);
+        List<Integer> dices = serverGameManager.getPlayers().get(0).getCurrentDice();
+        ArgumentCaptor<List> diceCaptor = ArgumentCaptor.forClass(List.class);
+        Mockito.verify(clientGameManager1,Mockito.times(1)).printDice(diceCaptor.capture());
+        for(int i = 0; i< dices.size();i++){
+            Assert.assertEquals(dices.get(i),diceCaptor.getValue().get(i));
+        }
+        bw1.write("1\n0 1 2\n");
+        bw1.flush();
+        Thread.sleep(2000);
+        Mockito.verify(clientGameManager1,Mockito.times(2)).printDice(diceCaptor.capture());
+        for(int i =0; i< serverGameManager.getPlayers().get(0).getCurrentDice().size();i++){
+            Assert.assertEquals(serverGameManager.getPlayers().get(0).getCurrentDice().get(i),diceCaptor.getAllValues().get(2).get(i));
+        }
+    }
+
+    @Test
+    public void firstPlayerCanPlaySecondRoundAfterAllThreePlayerFinished() throws Exception{
+        bw1.newLine();
+        bw1.write("3\n1\n");
+        bw1.flush();
+        Thread.sleep(2000);
+        Mockito.verify(clientGameManager1,Mockito.times(1)).handleStartRound(Mockito.any());
+        bw2.newLine();
+        bw2.write("3\n1\n");
+        bw2.flush();
+        Thread.sleep(2000);
+        Mockito.verify(clientGameManager2,Mockito.times(1)).handleStartRound(Mockito.any());
+        bw3.newLine();
+        bw3.write("3\n1\n");
+        bw3.flush();
+        Thread.sleep(2000);
+        Mockito.verify(clientGameManager3,Mockito.times(1)).handleStartRound(Mockito.any());
+        Mockito.verify(clientGameManager1,Mockito.times(2)).handleStartRound(Mockito.any());
+
+    }
+
+   
+
 
 }
