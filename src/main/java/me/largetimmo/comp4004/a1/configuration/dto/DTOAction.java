@@ -10,5 +10,6 @@ public enum DTOAction {
     START_ROUND,
     ROLL_DICE,
     HOLD_DICE,
-    FILL
+    FILL,
+    FINISH
 }

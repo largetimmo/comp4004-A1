@@ -91,10 +91,26 @@ public class ClientGameManager {
             case HOLD_DICE:
                 handleRollDice(dto);
                 break;
-
+            case FINISH:
+                handleFinish(dto);
+                break;
             default:
                 break;
         }
+    }
+
+    public void handleFinish(BasicDTO dto){
+        StringBuilder sb = new StringBuilder();
+        PlayerBO playerBO = players.stream().filter(p->p.getPlayerId().equals(dto.getData())).findAny().get();
+        sb.append("Congratulations, ");
+        sb.append(playerBO.getPlayerName());
+        sb.append(" has won this game with score ");
+        sb.append(playerBO.getScoreSheet().getTotal());
+        sb.append(" points!!!!!!!!!");
+        sb.append("\n");
+        sb.append("Great game everyone, and thanks for playing. Goodbye.");
+        System.out.print(sb);
+
     }
 
     public void handleSyncPlayer(BasicDTO dto) throws IOException {

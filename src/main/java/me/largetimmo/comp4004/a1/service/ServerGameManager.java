@@ -331,8 +331,13 @@ public class ServerGameManager {
         calculateScoreForPlayer(player,player.getCurrentDice(),category);
         player.setRound(player.getRound()+1);
         currentPlayer = ((currentPlayer + 1) % (players.size()));//Next one
-        if(currentPlayer == players.size() -1 && player.getRound() == 13){
-            //TODO: finish game
+        if(currentPlayer == 0 && player.getRound() == 13){
+            sendScoreBoardToAllPlayer();
+            BasicDTO basicDTO = new BasicDTO();
+            basicDTO.setAction(DTOAction.FINISH);
+            basicDTO.setType("String");
+            basicDTO.setData(players.stream().max(Comparator.comparing(p -> p.getScoreSheet().getTotal())).get().getPlayerId());
+            sendDataToAll(objectMapper.writeValueAsString(basicDTO));
         }else{
             sendScoreBoardToAllPlayer();
             tellPlayerRoundStart(players.get(currentPlayer).getPlayerId());
