@@ -178,6 +178,49 @@ public class GameAutoTest {
         Mockito.verify(clientGameManager3,Mockito.times(1)).handleFinish(Mockito.any());
     }
 
+    @Test
+    public void onlySecondYAHTZEECanCountAsFullHouse() throws Exception{
+        bw1.newLine();
+        bw1.write("3");
+        bw1.newLine();
+        bw1.flush();
+        Thread.sleep(1000);
+        serverGameManager.getPlayers().get(0).setCurrentDice(Arrays.asList(6,6,6,6,6));
+        bw1.write("9\n");
+        bw1.flush();
+        Thread.sleep(1000);
+        Assert.assertEquals(0,(int)serverGameManager.getPlayers().get(0).getScoreSheet().getTotal());
+
+    }
+    @Test
+    public void onlySecondYAHTZEECanCountAsFullHouse_2() throws Exception{
+        bw1.newLine();
+        bw1.write("3");
+        bw1.newLine();
+        bw1.flush();
+        Thread.sleep(1000);
+        serverGameManager.getPlayers().get(0).setCurrentDice(Arrays.asList(6,6,6,6,6));
+        bw1.write("12\n");
+        bw1.flush();
+        Thread.sleep(1000);
+        Assert.assertEquals((int)serverGameManager.getPlayers().get(0).getScoreSheet().getTotal(),50);
+        bw2.write("\n3\n1\n");
+        bw2.flush();
+        bw3.write("\n3\n1\n");
+        bw3.flush();
+        bw1.newLine();
+        bw1.write("3");
+        bw1.newLine();
+        bw1.flush();
+        Thread.sleep(1000);
+        serverGameManager.getPlayers().get(0).setCurrentDice(Arrays.asList(6,6,6,6,6));
+        bw1.write("9\n");
+        bw1.flush();
+        Thread.sleep(1000);
+        Assert.assertEquals((int)serverGameManager.getPlayers().get(0).getScoreSheet().getTotal(),25+50+100);
+
+    }
+
 
 
 }
