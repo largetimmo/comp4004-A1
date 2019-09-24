@@ -132,6 +132,7 @@ public class ClientGameManager {
         sysInput.readLine();
         BasicDTO startDTO = new BasicDTO();
         startDTO.setAction(DTOAction.START_ROUND);
+        holdCount = 0;
         currentPlayer.getConnection().send(objectMapper.writeValueAsString(startDTO));
     }
     public void handleRollDice(BasicDTO dto) throws IOException{
