@@ -39,6 +39,7 @@ public class ServerGameManager {
         players = new ArrayList<>();
         this.objectMapper = objectMapper;
         this.playerDTOMapper = playerDTOMapper;
+        System.out.println("Server has started.Waiting for player....");
     }
 
     public PlayerBO initPlayer(Socket socket) {
@@ -263,6 +264,7 @@ public class ServerGameManager {
         PlayerBO player = players.stream().filter(p -> p.getPlayerId().equals(playerId)).findAny().get();
         player.setReady(true);
         player.setPlayerName(dto.getData());
+        System.out.println("Player "+ dto.getData()+" has joined the game");
         Long playerNotReady = players.stream().filter(p -> !p.getReady()).count();
         if (playerNotReady == 0 && players.size() == 3) {
             sendScoreBoardToAllPlayer();
@@ -333,8 +335,13 @@ public class ServerGameManager {
         ScoreCategory category = ScoreCategory.valueOf(dto.getData());
         calculateScoreForPlayer(player,player.getCurrentDice(),category);
         player.setRound(player.getRound()+1);
+        System.out.println("Player "+(currentPlayer+1)+" has completed their turn");
+        if(currentPlayer == 2){
+            System.out.println("Round "+ player.getRound()+" has completed");
+        }
         currentPlayer = ((currentPlayer + 1) % (players.size()));//Next one
         if(currentPlayer == 0 && player.getRound() == 13){
+            System.out.println("Game ends");
             sendScoreBoardToAllPlayer();
             BasicDTO basicDTO = new BasicDTO();
             basicDTO.setAction(DTOAction.FINISH);
