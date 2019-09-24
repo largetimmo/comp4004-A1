@@ -387,7 +387,7 @@ public class ClientGameManager {
         sb.append("|");
         sb.append(" (13) Chance : ");
         sb.append(player.getScoreSheet().getLowerSection().getChance() == -1 ? "" : player.getScoreSheet().getLowerSection().getChance());
-        sb.append(String.join("", Collections.nCopies(32 - (player.getScoreSheet().getLowerSection().getChance() == -1 ? "" : Integer.toString(player.getScoreSheet().getLowerSection().getChance())).length(), " ")));
+        sb.append(String.join("", Collections.nCopies(33 - (player.getScoreSheet().getLowerSection().getChance() == -1 ? "" : Integer.toString(player.getScoreSheet().getLowerSection().getChance())).length(), " ")));
         sb.append("|");
         sb.append("\n");
         sb.append("|");
