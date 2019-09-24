@@ -77,64 +77,67 @@ public class ServerGameManager {
 
     public void calculateScoreForPlayer(PlayerBO player, List<Integer> dices, ScoreCategory category) {
         Integer points = calculateScore(dices, category);
-        if (category == ScoreCategory.YAHTZEE && player.getScoreSheet().getLowerSection().getYahtzee() == 50 && points != 0) {
+
+        if (player.getScoreSheet().getLowerSection().getYahtzee() == 50 && calculateScore(dices,ScoreCategory.YAHTZEE) != 0) {
             player.getScoreSheet().getLowerSection().setYahtzeeBonus(player.getScoreSheet().getLowerSection().getYahtzeeBonus() + 1);
-        } else {
-            switch (category) {
-                case ONES:
-                    player.getScoreSheet().getUpperSection().setAces(points);
-                    break;
-                case TWOS:
-                    player.getScoreSheet().getUpperSection().setTwos(points);
-                    break;
-                case THREES:
-                    player.getScoreSheet().getUpperSection().setThrees(points);
-                    break;
-
-                case FOURS:
-                    player.getScoreSheet().getUpperSection().setFours(points);
-                    break;
-
-                case FIVES:
-                    player.getScoreSheet().getUpperSection().setFives(points);
-                    break;
-
-                case SIXES:
-                    player.getScoreSheet().getUpperSection().setSixes(points);
-                    break;
-
-                case THREE_OF_A_KIND:
-                    player.getScoreSheet().getLowerSection().setThreeOfAKind(points);
-                    break;
-
-                case FOUR_OF_A_KIND:
-                    player.getScoreSheet().getLowerSection().setFourOfAKind(points);
-                    break;
-
-                case FULL_HOUSE:
-                    player.getScoreSheet().getLowerSection().setFullHouse(points);
-                    break;
-
-                case SMALL_STRAIGHT:
-                    player.getScoreSheet().getLowerSection().setSmallStraight(points);
-                    break;
-
-                case LARGE_STRAIGHT:
-                    player.getScoreSheet().getLowerSection().setLargeStraight(points);
-                    break;
-
-                case YAHTZEE:
-                    player.getScoreSheet().getLowerSection().setYahtzee(points);
-                    break;
-
-                case CHANCE:
-                    player.getScoreSheet().getLowerSection().setChance(points);
-                    break;
-
-                default:
-                    return;
-            }
+        } else if (category == ScoreCategory.FULL_HOUSE && player.getScoreSheet().getLowerSection().getYahtzee() == -1 && dices.stream().distinct().count() == 1){
+            points = 0;
         }
+        switch (category) {
+            case ONES:
+                player.getScoreSheet().getUpperSection().setAces(points);
+                break;
+            case TWOS:
+                player.getScoreSheet().getUpperSection().setTwos(points);
+                break;
+            case THREES:
+                player.getScoreSheet().getUpperSection().setThrees(points);
+                break;
+
+            case FOURS:
+                player.getScoreSheet().getUpperSection().setFours(points);
+                break;
+
+            case FIVES:
+                player.getScoreSheet().getUpperSection().setFives(points);
+                break;
+
+            case SIXES:
+                player.getScoreSheet().getUpperSection().setSixes(points);
+                break;
+
+            case THREE_OF_A_KIND:
+                player.getScoreSheet().getLowerSection().setThreeOfAKind(points);
+                break;
+
+            case FOUR_OF_A_KIND:
+                player.getScoreSheet().getLowerSection().setFourOfAKind(points);
+                break;
+
+            case FULL_HOUSE:
+                player.getScoreSheet().getLowerSection().setFullHouse(points);
+                break;
+
+            case SMALL_STRAIGHT:
+                player.getScoreSheet().getLowerSection().setSmallStraight(points);
+                break;
+
+            case LARGE_STRAIGHT:
+                player.getScoreSheet().getLowerSection().setLargeStraight(points);
+                break;
+
+            case YAHTZEE:
+                player.getScoreSheet().getLowerSection().setYahtzee(points);
+                break;
+
+            case CHANCE:
+                player.getScoreSheet().getLowerSection().setChance(points);
+                break;
+
+            default:
+                return;
+        }
+
         player.getScoreSheet().calculateTotal();
     }
 
