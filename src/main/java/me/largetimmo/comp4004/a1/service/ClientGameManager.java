@@ -269,6 +269,8 @@ public class ClientGameManager {
                 }
                 if (!filled.contains(scoreCategory)) {
                     break;
+                }else{
+                    System.out.println("This category has already filled with score. Please try another one.");
                 }
             }
             filled.add(scoreCategory);
