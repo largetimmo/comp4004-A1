@@ -4,6 +4,7 @@ package me.largetimmo.comp4004.a1.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import me.largetimmo.comp4004.a1.configuration.dto.BasicDTO;
 import me.largetimmo.comp4004.a1.configuration.dto.DTOAction;
@@ -30,6 +31,7 @@ public class ServerGameManager {
 
     private final Object scoreBoardLock = null;
 
+    @Setter
     private int currentPlayer = 0;
 
     private final List<ScoreCategory> upperSection = new ArrayList<>(Arrays.asList(ScoreCategory.ONES,

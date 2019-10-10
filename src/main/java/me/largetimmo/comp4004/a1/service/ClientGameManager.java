@@ -35,6 +35,7 @@ public class ClientGameManager {
 
     private InputStream inputStream;
 
+    @Getter
     private List<ScoreCategory> filled = new ArrayList<>();
 
     private int holdCount = 0;
