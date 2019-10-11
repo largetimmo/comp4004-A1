@@ -17,7 +17,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 @Slf4j
-public class TestStepDef extends AbstractStepDef implements En {
+public class ScoringStepDef extends AbstractStepDef implements En {
 
     @Autowired
     @Qualifier("userSim1")
@@ -35,7 +35,7 @@ public class TestStepDef extends AbstractStepDef implements En {
 
     private boolean matched = false;
 
-    public TestStepDef() throws Exception{
+    public ScoringStepDef() throws Exception{
         Thread.sleep(1000);
 
 
@@ -43,7 +43,6 @@ public class TestStepDef extends AbstractStepDef implements En {
             log.info("Player rolled dice");
             bw1.newLine();
             bw1.flush();
-            log.info(serverGameManager.getPlayers().get(0).getScoreSheet().getUpperSection().getAces().toString());
         });
         And("user has dices:", (DataTable dices) -> {
             Thread.sleep(1000);
@@ -90,6 +89,7 @@ public class TestStepDef extends AbstractStepDef implements En {
             serverGameManager.setCurrentPlayer(0);
             clientGameManager.getFilled().clear();
             serverGameManager.tellPlayerRoundStart(playerBO.getPlayerId());
+            serverGameManager.getPlayers().get(0).setRound(0);
         });
 
 
