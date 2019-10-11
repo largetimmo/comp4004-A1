@@ -28,38 +28,38 @@ public class ScoreCalculateTest {
     @Test
     public void calculateUpperSectionBonus(){
         UpperSectionGameScore upperSectionGameScore = new UpperSectionGameScore();
-        Assert.assertEquals(0, (int) upperSectionGameScore.getTotal());
+        Assert.assertEquals(0, (int) upperSectionGameScore.getUpperTotal());
         upperSectionGameScore.setSixes(36);
         upperSectionGameScore.calculateTotal();
-        Assert.assertEquals(36, (int) upperSectionGameScore.getTotal());
+        Assert.assertEquals(36, (int) upperSectionGameScore.getUpperTotal());
         upperSectionGameScore.setFives(25);
         upperSectionGameScore.calculateTotal();
-        Assert.assertEquals(61, (int) upperSectionGameScore.getTotal());
+        Assert.assertEquals(61, (int) upperSectionGameScore.getUpperTotal());
         upperSectionGameScore.setAces(2);
         upperSectionGameScore.calculateTotal();
-        Assert.assertEquals(98, (int) upperSectionGameScore.getTotal());
+        Assert.assertEquals(98, (int) upperSectionGameScore.getUpperTotal());
         upperSectionGameScore.setFours(8);
         upperSectionGameScore.calculateTotal();
-        Assert.assertEquals(106, (int) upperSectionGameScore.getTotal());
+        Assert.assertEquals(106, (int) upperSectionGameScore.getUpperTotal());
 
     }
 
     @Test
     public void calculateLowerSectionBonus(){
         LowerSectionGameScore lowerSectionGameScore  = new LowerSectionGameScore();
-        Assert.assertEquals(0, (int)lowerSectionGameScore.getTotal());
+        Assert.assertEquals(0, (int)lowerSectionGameScore.getLowerTotal());
         lowerSectionGameScore.setYahtzee(50);
         lowerSectionGameScore.calculateTotal();
-        Assert.assertEquals(50,(int)lowerSectionGameScore.getTotal());
+        Assert.assertEquals(50,(int)lowerSectionGameScore.getLowerTotal());
         lowerSectionGameScore.setYahtzeeBonus(2);
         lowerSectionGameScore.calculateTotal();
-        Assert.assertEquals(250,(int)lowerSectionGameScore.getTotal());
+        Assert.assertEquals(250,(int)lowerSectionGameScore.getLowerTotal());
         lowerSectionGameScore.setFourOfAKind(40);
         lowerSectionGameScore.setThreeOfAKind(30);
         lowerSectionGameScore.setFullHouse(25);
         lowerSectionGameScore.setSmallStraight(30);
         lowerSectionGameScore.calculateTotal(); 
-        Assert.assertEquals(375,(int)lowerSectionGameScore.getTotal());
+        Assert.assertEquals(375,(int)lowerSectionGameScore.getLowerTotal());
 
 
 
@@ -69,32 +69,32 @@ public class ScoreCalculateTest {
     public void calculateScoreSheetTotal(){
         ScoreSheetBO scoreSheetBO = new ScoreSheetBO();
         Assert.assertEquals(0,(int)scoreSheetBO.getTotal());
-        Assert.assertEquals(0, (int) scoreSheetBO.getUpperSection().getTotal());
+        Assert.assertEquals(0, (int) scoreSheetBO.getUpperSection().getUpperTotal());
         scoreSheetBO.getUpperSection().setSixes(36);
         scoreSheetBO.calculateTotal();
-        Assert.assertEquals(36, (int) scoreSheetBO.getUpperSection().getTotal());
+        Assert.assertEquals(36, (int) scoreSheetBO.getUpperSection().getUpperTotal());
         scoreSheetBO.getUpperSection().setFives(25);
         scoreSheetBO.calculateTotal();
-        Assert.assertEquals(61, (int) scoreSheetBO.getUpperSection().getTotal());
+        Assert.assertEquals(61, (int) scoreSheetBO.getUpperSection().getUpperTotal());
         scoreSheetBO.getUpperSection().setAces(2);
         scoreSheetBO.calculateTotal();
-        Assert.assertEquals(98, (int) scoreSheetBO.getUpperSection().getTotal());
+        Assert.assertEquals(98, (int) scoreSheetBO.getUpperSection().getUpperTotal());
         scoreSheetBO.getUpperSection().setFours(8);
         scoreSheetBO.calculateTotal();
-        Assert.assertEquals(106, (int) scoreSheetBO.getUpperSection().getTotal());
-        Assert.assertEquals(0, (int)scoreSheetBO.getLowerSection().getTotal());
+        Assert.assertEquals(106, (int) scoreSheetBO.getUpperSection().getUpperTotal());
+        Assert.assertEquals(0, (int)scoreSheetBO.getLowerSection().getLowerTotal());
         scoreSheetBO.getLowerSection().setYahtzee(50);
         scoreSheetBO.calculateTotal();
-        Assert.assertEquals(50,(int)scoreSheetBO.getLowerSection().getTotal());
+        Assert.assertEquals(50,(int)scoreSheetBO.getLowerSection().getLowerTotal());
         scoreSheetBO.getLowerSection().setYahtzeeBonus(2);
         scoreSheetBO.calculateTotal();
-        Assert.assertEquals(250,(int)scoreSheetBO.getLowerSection().getTotal());
+        Assert.assertEquals(250,(int)scoreSheetBO.getLowerSection().getLowerTotal());
         scoreSheetBO.getLowerSection().setFourOfAKind(40);
         scoreSheetBO.getLowerSection().setThreeOfAKind(30);
         scoreSheetBO.getLowerSection().setFullHouse(25);
         scoreSheetBO.getLowerSection().setSmallStraight(30);
         scoreSheetBO.calculateTotal();
-        Assert.assertEquals(375,(int)scoreSheetBO.getLowerSection().getTotal());
+        Assert.assertEquals(375,(int)scoreSheetBO.getLowerSection().getLowerTotal());
         scoreSheetBO.calculateTotal();
         Assert.assertEquals(106+375,(int)scoreSheetBO.getTotal());
 

@@ -17,30 +17,30 @@ public class UpperSectionGameScore {
 
     private Integer sixes = -1;
 
-    private Integer total = 0;
+    private Integer upperTotal = 0;
 
     public void calculateTotal(){
-        total = 0;
+        upperTotal = 0;
         if(aces > 0){
-            total += aces;
+            upperTotal += aces;
         }
         if(twos > 0){
-            total += twos;
+            upperTotal += twos;
         }
         if(threes > 0){
-            total += threes;
+            upperTotal += threes;
         }
         if(fours > 0){
-            total += fours;
+            upperTotal += fours;
         }
         if(fives > 0){
-            total += fives;
+            upperTotal += fives;
         }
         if(sixes > 0){
-            total += sixes;
+            upperTotal += sixes;
         }
-        if(total >= 63){
-            total += 35;
+        if(upperTotal >= 63){
+            upperTotal += 35;
         }
     }
 }

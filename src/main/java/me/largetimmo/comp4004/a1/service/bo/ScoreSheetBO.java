@@ -14,7 +14,7 @@ public class ScoreSheetBO {
     public void calculateTotal(){
         upperSection.calculateTotal();
         lowerSection.calculateTotal();
-        total = upperSection.getTotal() + lowerSection.getTotal();
+        total = upperSection.getUpperTotal() + lowerSection.getLowerTotal();
     }
 
 }

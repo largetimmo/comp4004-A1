@@ -22,32 +22,32 @@ public class LowerSectionGameScore {
 
     private Integer YahtzeeBonus = 0;
 
-    private Integer total = 0;
+    private Integer lowerTotal = 0;
 
     public void  calculateTotal(){
-        total = 0;
+        lowerTotal = 0;
         if(threeOfAKind > 0){
-            total += threeOfAKind;
+            lowerTotal += threeOfAKind;
         }
         if(fourOfAKind > 0){
-            total += fourOfAKind;
+            lowerTotal += fourOfAKind;
         }
         if(fullHouse > 0){
-            total += fullHouse;
+            lowerTotal += fullHouse;
         }
         if(smallStraight > 0){
-            total += smallStraight;
+            lowerTotal += smallStraight;
         }
         if(largeStraight > 0){
-            total += largeStraight;
+            lowerTotal += largeStraight;
         }
         if(Yahtzee > 0){
-            total += Yahtzee;
+            lowerTotal += Yahtzee;
         }if(YahtzeeBonus > 0){
-            total += YahtzeeBonus*100;
+            lowerTotal += YahtzeeBonus*100;
         }
         if(chance > 0){
-            total += chance;
+            lowerTotal += chance;
         }
     }
 

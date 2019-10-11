@@ -346,8 +346,8 @@ public class ClientGameManager {
         sb.append(String.join("", Collections.nCopies(6 - (player.getScoreSheet().getUpperSection().getSixes() == -1 ? "" : Integer.toString(player.getScoreSheet().getUpperSection().getSixes())).length(), " ")));
         sb.append("|");
         sb.append(" Bonus: ");
-        sb.append(player.getScoreSheet().getUpperSection().getTotal() >= 98 ? 35 : 0);
-        sb.append(String.join("", Collections.nCopies(27 - Integer.toString(player.getScoreSheet().getUpperSection().getTotal() >= 98 ? 35 : 0).length(), " ")));
+        sb.append(player.getScoreSheet().getUpperSection().getUpperTotal() >= 98 ? 35 : 0);
+        sb.append(String.join("", Collections.nCopies(27 - Integer.toString(player.getScoreSheet().getUpperSection().getUpperTotal() >= 98 ? 35 : 0).length(), " ")));
         sb.append("|");
         sb.append("\n");
         sb.append("|");
