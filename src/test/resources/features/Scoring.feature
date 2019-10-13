@@ -589,7 +589,8 @@ Feature: As an user, I want my dices can convert to points correctly
       | fullHouse |
     And put 0 on :
       | YahtzeeBonus |
-    Then reset user
+    Then set section to default:
+      | Yahtzee |
 
 
 

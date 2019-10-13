@@ -1,4 +1,4 @@
-Feature: Users join server
+Feature: As an user, I would like to join the server to play
 # |--------|--|---------|
   # 0 .....2.3.4.........
   Scenario: 0 player cannot start game
