@@ -14,10 +14,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.io.BufferedWriter;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 public class SpringStepDef extends AbstractStepDef implements En {
@@ -122,7 +119,14 @@ public class SpringStepDef extends AbstractStepDef implements En {
             List<String> dices = dataTable.asList();
             if (dices.size() == 1 && "".equals(dices.get(0))){
                 bw1.newLine();
+                bw1.flush();
+
             }else{
+                Map<String,Integer> keepedDices = new HashMap<>();
+                for (String d: dices){
+                    log.info(serverGameManager.getPlayers().get(0).getCurrentDice().get(Integer.parseInt(d)).toString());
+                    keepedDices.put(d,serverGameManager.getPlayers().get(0).getCurrentDice().get(Integer.parseInt(d)));
+                }
                 StringBuffer sb = new StringBuffer();
                 for (String d : dices){
                     sb.append(d);
@@ -131,8 +135,15 @@ public class SpringStepDef extends AbstractStepDef implements En {
                 sb.deleteCharAt(sb.lastIndexOf(" "));
                 log.info("Parsed input : '{}'",sb.toString());
                 bw1.write(sb.toString());
+                bw1.newLine();
+                bw1.flush();
+                Thread.sleep(1000);
+                for (String d : dices){
+                    log.info(serverGameManager.getPlayers().get(0).getCurrentDice().get(Integer.parseInt(d)).toString());
+                    Assert.assertEquals(serverGameManager.getPlayers().get(0).getCurrentDice().get(Integer.parseInt(d)), keepedDices.get(d));
+                }
+
             }
-            bw1.flush();
         });
 
         Then("category score is correct",()->{
