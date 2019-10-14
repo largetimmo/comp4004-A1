@@ -7,6 +7,12 @@ Feature: As an user, I would like to join the server to play
     Then 0 player joined server
     Then game is not start
 
+  Scenario: 1 player cannot start game
+    Given server starts
+    And wait for player join
+    Then 1 player joined server
+    Then game is not start
+
   Scenario: 2 player cannot start game
     Given server starts
     And wait for player join

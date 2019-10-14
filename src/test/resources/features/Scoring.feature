@@ -423,7 +423,7 @@ Feature: As an user, I want my dices can convert to points correctly
     Then set section to default:
       | fourOfAKind |
 
-  Scenario: User get five of a kind and want to score on three of a kind
+  Scenario: User get five of a kind and want to score on four of a kind
     Given user roll dice
     And user has dices:
       | 2 |
@@ -591,6 +591,19 @@ Feature: As an user, I want my dices can convert to points correctly
       | YahtzeeBonus |
     Then set section to default:
       | Yahtzee |
-
+  Scenario: User get something and want score on chance
+    Given user roll dice
+    And user has dices:
+      | 1 |
+      | 3 |
+      | 2 |
+      | 2 |
+      | 1 |
+    And user score to 13
+    Then wait for 1
+    Then scoreboard section is 9 :
+      | chance |
+    Then set section to default:
+      | chance |
 
 
