@@ -8,6 +8,7 @@ import me.largetimmo.comp4004.a1.controller.ServerMessageIOController;
 import me.largetimmo.comp4004.a1.service.ClientGameManager;
 import me.largetimmo.comp4004.a1.service.ServerGameManager;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.mockito.Mockito;
 
 import java.io.*;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.Random;
 
 
+@Ignore
 public class UserJoinStepDef implements En {
 
     private static final Map<String, Object> context = new HashMap<>();

@@ -1,4 +1,4 @@
-Feature: As an user, I would to play in order and start a round after my provious player finished
+Feature: As an user, I would to play in order and start a round after my previous player finished
 
   Scenario: all player should play in order and play one by one
     Given user 1 roll dice

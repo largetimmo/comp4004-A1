@@ -8,6 +8,7 @@ import me.largetimmo.comp4004.a1.service.ServerGameManager;
 import me.largetimmo.comp4004.a1.service.bo.PlayerBO;
 import me.largetimmo.comp4004.a1.service.bo.ScoreSheetBO;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@Ignore
 public class SpringStepDef extends AbstractStepDef implements En {
 
     @Autowired

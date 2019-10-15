@@ -21,7 +21,7 @@ Feature: As an user, I would like to re-roll dices that I don't want
     Then set section to default:
       | aces |
 
-  Scenario:  User keep 1 dice
+  Scenario: User keep 1 dice
     Given user roll dice
     Then wait for 1
     And user hold dices:
