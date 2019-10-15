@@ -1,6 +1,6 @@
 package me.largetimmo.comp4004.a1.cucumber.stepdef;
 
-import me.largetimmo.comp4004.a1.AutoTestContext;
+import me.largetimmo.comp4004.a1.a1junitTest.AutoTestContext;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;

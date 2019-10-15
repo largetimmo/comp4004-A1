@@ -1,5 +1,6 @@
-package me.largetimmo.comp4004.a1;
+package me.largetimmo.comp4004.a1.a1junitTest;
 
+import me.largetimmo.comp4004.a1.A1Application;
 import org.junit.Assert;
 import org.junit.Test;
 

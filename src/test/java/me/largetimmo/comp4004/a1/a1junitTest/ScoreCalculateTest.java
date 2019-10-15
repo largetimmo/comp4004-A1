@@ -1,4 +1,4 @@
-package me.largetimmo.comp4004.a1;
+package me.largetimmo.comp4004.a1.a1junitTest;
 
 import me.largetimmo.comp4004.a1.service.ServerGameManager;
 import me.largetimmo.comp4004.a1.service.bo.*;
